@@ -55,14 +55,28 @@ def load_data():
     except:
         return pd.DataFrame()
 
-def get_base64_image(image_id):
+# ✅ الدالة المعدلة: بتبحث باسم الملف المكتوب في عمود Image
+def get_base64_image(image_name_from_excel):
     try:
-        # التعديل هنا عشان يلقط att_رقم_
-        all_imgs = os.listdir("assets")
-        match = [f for f in all_imgs if f"att_{image_id}_" in f]
-        if match:
-            with open(os.path.join("assets", match[0]), "rb") as img_file:
+        if not os.path.exists("assets") or pd.isna(image_name_from_excel):
+            return None
+        
+        # بنجيب اسم الملف ونشيل منه أي مسافات زيادة
+        target_file = str(image_name_from_excel).strip()
+        
+        # بنحاول نفتح الملف مباشرة من فولدر assets
+        img_path = os.path.join("assets", target_file)
+        
+        if os.path.exists(img_path):
+            with open(img_path, "rb") as img_file:
                 return base64.b64encode(img_file.read()).decode()
+        else:
+            # لو ملقاش الاسم بالظبط، بيدور على أي ملف جوه الفولدر فيه نفس الاسم (احتياطي)
+            all_imgs = os.listdir("assets")
+            match = [f for f in all_imgs if target_file in f]
+            if match:
+                with open(os.path.join("assets", match[0]), "rb") as img_file:
+                    return base64.b64encode(img_file.read()).decode()
     except:
         return None
     return None
@@ -107,16 +121,23 @@ with col2:
         m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
         
         for r in df_plot.itertuples():
-            img_base64 = get_base64_image(r.Index)
+            # ✅ الربط الصحيح: بنبعت القيمة اللي في عمود Image
+            img_base64 = get_base64_image(r.Image)
+            
             if img_base64:
-                img_html = f'<div style="text-align:center;"><img src="data:image/jpeg;base64,{img_base64}" style="width:150px;border-radius:5px;"><br><b style="color:black;">{r.Object}</b></div>'
+                img_html = f'''
+                <div style="text-align:center; font-family: 'Montserrat', sans-serif;">
+                    <img src="data:image/jpeg;base64,{img_base64}" style="width:150px;border-radius:5px;border:1px solid #FACC15;">
+                    <br><b style="color:black;">{r.Object}</b>
+                    <br><span style="color:black;">Confidence: {r.Confidence}%</span>
+                </div>'''
             else:
-                img_html = f'<b style="color:black;">ID: {r.Index}</b>'
+                img_html = f'<div style="color:black;text-align:center;">Image Not Found:<br>{r.Image}</div>'
             
             folium.CircleMarker(
                 location=[r.Longitude, r.Latitude], radius=6, 
                 color=color_map.get(r.Object, "#FFF"), fill=True,
-                popup=folium.Popup(folium.IFrame(img_html, width=170, height=180))
+                popup=folium.Popup(folium.IFrame(img_html, width=170, height=200))
             ).add_to(m)
         st_folium(m, height=320, width="100%", key=f"map_{view}")
 
