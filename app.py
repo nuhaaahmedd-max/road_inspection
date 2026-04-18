@@ -20,7 +20,7 @@ color_map = {
     'Lamp_Post': '#FACC15'   
 }
 
-# 3. CSS Customization (كودك الأصلي بالحرف)
+# 3. CSS Customization (كودك الأصلي)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
@@ -55,19 +55,11 @@ def load_data():
     except:
         return pd.DataFrame()
 
-# ✅ الدالة المعدلة عشان تلقط الصور بذكاء
 def get_base64_image(image_id):
     try:
-        if not os.path.exists("assets"):
-            return None
+        # التعديل هنا عشان يلقط att_رقم_
         all_imgs = os.listdir("assets")
-        # بيدور على رقم الـ ID في أي مكان جوه اسم الملف (حل مشكلة المسافات أو الحروف الكبيرة)
-        search_str = f"_{image_id}_"
-        match = [f for f in all_imgs if search_str in f or f.startswith(f"att_{image_id}_")]
-        
-        if not match: # محاولة أخيرة لو الرقم بس هو اللي موجود
-            match = [f for f in all_imgs if str(image_id) in f]
-
+        match = [f for f in all_imgs if f"att_{image_id}_" in f]
         if match:
             with open(os.path.join("assets", match[0]), "rb") as img_file:
                 return base64.b64encode(img_file.read()).decode()
@@ -117,19 +109,14 @@ with col2:
         for r in df_plot.itertuples():
             img_base64 = get_base64_image(r.Index)
             if img_base64:
-                img_html = f'''
-                <div style="text-align:center; font-family: 'Montserrat', sans-serif;">
-                    <img src="data:image/jpeg;base64,{img_base64}" style="width:150px;border-radius:5px;border:1px solid #FACC15;">
-                    <br><b style="color:black;">{r.Object}</b>
-                    <br><span style="color:black;">Conf: {r.Confidence}%</span>
-                </div>'''
+                img_html = f'<div style="text-align:center;"><img src="data:image/jpeg;base64,{img_base64}" style="width:150px;border-radius:5px;"><br><b style="color:black;">{r.Object}</b></div>'
             else:
-                img_html = f'<div style="color:black;text-align:center;">No Image (ID: {r.Index})</div>'
+                img_html = f'<b style="color:black;">ID: {r.Index}</b>'
             
             folium.CircleMarker(
                 location=[r.Longitude, r.Latitude], radius=6, 
                 color=color_map.get(r.Object, "#FFF"), fill=True,
-                popup=folium.Popup(folium.IFrame(img_html, width=170, height=200))
+                popup=folium.Popup(folium.IFrame(img_html, width=170, height=180))
             ).add_to(m)
         st_folium(m, height=320, width="100%", key=f"map_{view}")
 
