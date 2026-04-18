@@ -4,7 +4,8 @@ import folium
 from streamlit_folium import st_folium
 from folium.plugins import HeatMap
 import plotly.express as px
-import base64  # ✅ إضافة
+import base64
+import os
 
 # 1. Configuration
 st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
@@ -139,7 +140,7 @@ def load_data():
         }
         return pd.DataFrame(data)
 
-# ✅ قراءة الصور من assets
+# قراءة الصورة
 def get_base64_image(path):
     try:
         with open(path, "rb") as img_file:
@@ -192,9 +193,12 @@ with col2:
             for r in df_plot.itertuples():
                 p_color = color_map.get(r.Object, "#FFFFFF") 
 
-                # ✅ الربط المباشر مع assets
-                img_path = f"assets/{r.Image}"
-                img_base64 = get_base64_image(img_path)
+                img_base64 = None
+                for file in os.listdir("assets"):
+                    if str(r.Image).replace(".jpg","") in file:
+                        img_path = os.path.join("assets", file)
+                        img_base64 = get_base64_image(img_path)
+                        break
 
                 if img_base64:
                     img_html = f"""
