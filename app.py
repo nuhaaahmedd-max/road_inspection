@@ -20,12 +20,15 @@ color_map = {
     'Lamp_Post': '#FACC15'   
 }
 
-# 3. CSS (نفس ديزاينك المظبوط)
+# 3. CSS Customization (نفس كودك الأصلي بالحرف)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
     html, body, [class*="css"]  { height: 100vh; overflow: hidden !important; }
     .stApp { background-color: #0B0E14; color: #FACC15; }
+    header[data-testid="stHeader"] { background: rgba(0,0,0,0) !important; color: #FACC15 !important; }
+    #MainMenu, footer, .stDeployButton { visibility: hidden; }
+    .main .block-container { padding-top: 0.5rem !important; padding-bottom: 0rem !important; height: 100vh; overflow: hidden; }
     .main-title { 
         color: #FACC15; font-family: 'Montserrat', sans-serif;
         font-size: 34px; font-weight: 900; text-align: left; 
@@ -38,6 +41,7 @@ st.markdown("""
     .card { background: #161B22; padding: 10px; border-radius: 12px; border: 1px solid #FACC15; text-align: center; }
     .value { font-size: 22px; font-weight: bold; color: #FACC15; }
     .label { font-size: 12px; color: #9CA3AF; text-transform: uppercase; }
+    .stAlert { background-color: #161B22 !important; border: 1px solid #FACC15 !important; color: #FACC15 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -46,25 +50,23 @@ st.markdown("""
 def load_data():
     try:
         df = pd.read_csv("road_data.csv")
-        df = df.dropna(subset=['Latitude','Longitude'])
+        # تنظيف البيانات والتأكد من وجود الأعمدة الأساسية
+        df = df.dropna(subset=['Latitude', 'Longitude', 'Image'])
         return df
     except:
         return pd.DataFrame()
 
-# ✅ دالة البحث المرنة جداً عن الصور
+# دالة البحث المرنة عن الصور (بتحل مشكلة الحروف الكبيرة والصغيرة والمسافات)
 def get_base64_image(excel_image_name):
     try:
         if not os.path.exists("assets") or pd.isna(excel_image_name):
             return None
         
-        # بننظف الاسم المطلوب
         target = str(excel_image_name).strip().lower()
         all_files = os.listdir("assets")
         
-        # بندور على أي ملف اسمه (بعد التنظيف) يطابق المطلوب
+        # البحث عن تطابق كامل أو جزئي
         match = [f for f in all_files if f.strip().lower() == target]
-        
-        # لو ملقاش تطابق حرفي، بيدور لو الاسم موجود جوه اسم الملف (احتياطي)
         if not match:
             match = [f for f in all_files if target in f.lower()]
 
@@ -77,15 +79,17 @@ def get_base64_image(excel_image_name):
 
 df = load_data()
 
-# ---------------- SIDEBAR & HEADER ----------------
+# ---------------- SIDEBAR ----------------
 st.sidebar.markdown("<h2 style='text-align:center;'>🛠️ FILTERS</h2>", unsafe_allow_html=True)
 view = st.sidebar.radio("MAP DISPLAY MODE:", ["Points", "Heatmap"], index=0)
 if not df.empty:
     selected_types = st.sidebar.multiselect("SELECT DEFECT:", options=df["Object"].unique(), default=list(df["Object"].unique()))
-    df_plot = df[df["Object"].isin(selected_types)]
+    confidence_min = st.sidebar.slider("MIN CONFIDENCE %:", 0, 100, 0)
+    df_plot = df[df["Object"].isin(selected_types) & (df["Confidence"] >= confidence_min)]
 else:
     df_plot = df
 
+# ---------------- HEADER ----------------
 st.markdown('<div class="main-title">Road Inspection Intelligence</div>', unsafe_allow_html=True)
 
 # ---------------- KPI ROW ----------------
@@ -113,6 +117,7 @@ with col2:
     if not df_plot.empty:
         m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
         
+        # التعديل المحوري: الربط المباشر بين الإحداثي والصورة في نفس الصف
         for index, row in df_plot.iterrows():
             img_b64 = get_base64_image(row['Image'])
             
@@ -121,14 +126,16 @@ with col2:
                 <div style="text-align:center; font-family: Montserrat, sans-serif; color:black;">
                     <h5 style="margin:5px;">{row['Object']}</h5>
                     <img src="data:image/jpeg;base64,{img_b64}" style="width:150px; border-radius:5px; border:2px solid #FACC15;">
-                    <p style="margin:5px;"><b>Conf: {row['Confidence']}%</b></p>
+                    <p style="margin:5px;"><b>Confidence: {row['Confidence']}%</b></p>
                 </div>'''
             else:
-                html_content = f'<div style="color:black; padding:10px;">Missing Image:<br>{row["Image"]}</div>'
+                html_content = f'<div style="color:black; padding:10px;">Image Not Found:<br>{row["Image"]}</div>'
 
             folium.CircleMarker(
                 location=[row['Longitude'], row['Latitude']],
-                radius=6, color=color_map.get(row['Object'], "#FFF"), fill=True,
+                radius=6, 
+                color=color_map.get(row['Object'], "#FFF"), 
+                fill=True,
                 popup=folium.Popup(folium.IFrame(html_content, width=180, height=220))
             ).add_to(m)
             
@@ -143,7 +150,7 @@ with col3:
     else:
         st.success("✅ System Clear")
 
-# ---------------- BOTTOM ----------------
+# ---------------- BOTTOM ROW ----------------
 st.markdown("---")
 c_low1, c_low2 = st.columns(2)
 with c_low1:
