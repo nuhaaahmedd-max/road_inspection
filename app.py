@@ -5,7 +5,7 @@ from streamlit_folium import st_folium
 from folium.plugins import HeatMap
 import plotly.express as px
 import base64
-import os
+import os  # ✅ تأكدت إن المكتبة دي موجودة عشان يشوف الفولدر
 
 # 1. Configuration
 st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
@@ -20,106 +20,39 @@ color_map = {
     'Lamp_Post': '#FACC15'   
 }
 
-# 3. CSS Customization
+# 3. CSS Customization (نفس الديزاين بتاعك بالظبط)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
-
-    html, body, [class*="css"]  {
-        height: 100vh;
-        overflow: hidden !important;
-    }
-
+    html, body, [class*="css"]  { height: 100vh; overflow: hidden !important; }
     .stApp { background-color: #0B0E14; color: #FACC15; }
     header[data-testid="stHeader"] { background: rgba(0,0,0,0) !important; color: #FACC15 !important; }
     #MainMenu, footer, .stDeployButton { visibility: hidden; }
-
-    .main .block-container { 
-        padding-top: 0.5rem !important; 
-        padding-bottom: 0rem !important; 
-        height: 100vh;
-        overflow: hidden;
-    }
-
-    section.main > div {
-        height: 100vh;
-        overflow: hidden;
-    }
-
-    .element-container {
-        margin-bottom: 0.4rem !important;
-    }
-
-    [data-testid="column"] {
-        height: 100%;
-    }
-
+    .main .block-container { padding-top: 0.5rem !important; padding-bottom: 0rem !important; height: 100vh; overflow: hidden; }
+    section.main > div { height: 100vh; overflow: hidden; }
+    .element-container { margin-bottom: 0.4rem !important; }
+    [data-testid="column"] { height: 100%; }
     .main-title { 
-        color: #FACC15; 
-        font-family: 'Montserrat', sans-serif;
-        font-size: 34px; 
-        font-weight: 900; 
-        text-align: left; 
-        padding: 10px 0px 10px 15px; 
-        border-bottom: 2px solid #1F2937; 
-        margin-bottom: 15px; 
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        -webkit-text-stroke: 1.5px #000000;
+        color: #FACC15; font-family: 'Montserrat', sans-serif;
+        font-size: 34px; font-weight: 900; text-align: left; 
+        padding: 10px 0px 10px 15px; border-bottom: 2px solid #1F2937; 
+        margin-bottom: 15px; letter-spacing: 2px;
+        text-transform: uppercase; -webkit-text-stroke: 1.5px #000000;
         text-shadow: 3px 3px 0px #000000;
     }
-
-    iframe {
-        border: 2px solid #FACC15 !important;
-        border-radius: 10px !important;
-        height: 320px !important;
-    }
-
-    [data-testid="stSidebar"] label p, 
-    [data-testid="stSidebar"] span p,
-    [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p { 
-        color: #FACC15 !important; 
-    }
-
+    iframe { border: 2px solid #FACC15 !important; border-radius: 10px !important; height: 320px !important; }
+    [data-testid="stSidebar"] label p, [data-testid="stSidebar"] span p, [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p { color: #FACC15 !important; }
     div[data-baseweb="radio"] div { border-color: #FACC15 !important; }
     div[data-baseweb="radio"] div::after { background-color: #FACC15 !important; }
     div[data-baseweb="slider"] > div > div > div { background-color: #FACC15 !important; }
     div[data-baseweb="slider"] > div > div { background-color: #FACC15 !important; }
-
-    span[data-baseweb="tag"] { 
-        background-color: transparent !important; 
-        border: 1.5px solid #FACC15 !important; 
-        color: #FACC15 !important; 
-        font-weight: bold;
-    }
-
-    div[data-baseweb="select"] > div { 
-        background-color: #161B22 !important; 
-        border: 1px solid #FACC15 !important; 
-        color: #FACC15 !important; 
-    }
-
-    [data-testid="stSidebar"] { 
-        background-color: #05070A !important; 
-        border-right: 2px solid #FACC15; 
-    }
-
-    .card { 
-        background: #161B22; 
-        padding: 10px; 
-        border-radius: 12px; 
-        border: 1px solid #FACC15; 
-        text-align: center; 
-    }
-
+    span[data-baseweb="tag"] { background-color: transparent !important; border: 1.5px solid #FACC15 !important; color: #FACC15 !important; font-weight: bold; }
+    div[data-baseweb="select"] > div { background-color: #161B22 !important; border: 1px solid #FACC15 !important; color: #FACC15 !important; }
+    [data-testid="stSidebar"] { background-color: #05070A !important; border-right: 2px solid #FACC15; }
+    .card { background: #161B22; padding: 10px; border-radius: 12px; border: 1px solid #FACC15; text-align: center; }
     .value { font-size: 22px; font-weight: bold; color: #FACC15; }
     .label { font-size: 12px; color: #9CA3AF; text-transform: uppercase; }
-
-    .stAlert { 
-        background-color: #161B22 !important; 
-        border: 1px solid #FACC15 !important; 
-        color: #FACC15 !important; 
-    }
+    .stAlert { background-color: #161B22 !important; border: 1px solid #FACC15 !important; color: #FACC15 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -132,21 +65,20 @@ def load_data():
         df = df.dropna(subset=['Latitude','Longitude'])
         return df
     except:
-        data = {
-            'Latitude': [30.0444, 30.0450, 30.0460, 30.0470],
-            'Longitude': [31.2357, 31.2360, 31.2370, 31.2380],
-            'Object': ['Crack', 'Clear', 'Crack', 'Pothole'],
-            'Confidence': [95, 88, 92, 85]
-        }
-        return pd.DataFrame(data)
+        return pd.DataFrame()
 
-# قراءة الصورة
-def get_base64_image(path):
+# ✅ التعديل هنا لربط الصور برقم الصف (Index) وفولدر assets
+def get_base64_image(image_id):
     try:
-        with open(path, "rb") as img_file:
-            return base64.b64encode(img_file.read()).decode()
+        # بنبص جوه فولدر assets على أي صورة بتبدأ برقم الـ ID (زي 0_ أو 1_)
+        all_imgs = os.listdir("assets")
+        match = [f for f in all_imgs if f.startswith(f"{image_id}_")]
+        if match:
+            with open(os.path.join("assets", match[0]), "rb") as img_file:
+                return base64.b64encode(img_file.read()).decode()
     except:
         return None
+    return None
 
 df = load_data()
 df_plot = df.copy()
@@ -180,9 +112,10 @@ col1, col2, col3 = st.columns([1, 1.8, 1])
 
 with col1:
     st.markdown("### Defect Ratio")
-    fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
-    fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15")
-    st.plotly_chart(fig1, use_container_width=True)
+    if not df_plot.empty:
+        fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
+        fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15")
+        st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
     st.markdown(f"### Spatial View ({view})")
@@ -193,25 +126,21 @@ with col2:
             for r in df_plot.itertuples():
                 p_color = color_map.get(r.Object, "#FFFFFF") 
 
-                img_base64 = None
-                for file in os.listdir("assets"):
-                    if str(r.Image).replace(".jpg","") in file:
-                        img_path = os.path.join("assets", file)
-                        img_base64 = get_base64_image(img_path)
-                        break
+                # ✅ بنادي الدالة برقم الصف (r.Index) عشان تجيب الصورة من assets
+                img_base64 = get_base64_image(r.Index)
 
                 if img_base64:
                     img_html = f"""
-                    <div style="text-align:center;">
-                        <h4 style="color:black;">{r.Object}</h4>
-                        <img src="data:image/jpeg;base64,{img_base64}" style="width:180px;border-radius:10px;">
-                        <p style="color:black;">Confidence: {r.Confidence}%</p>
+                    <div style="text-align:center; font-family: 'Montserrat', sans-serif;">
+                        <h4 style="color:black; margin-bottom:5px;">{r.Object}</h4>
+                        <img src="data:image/jpeg;base64,{img_base64}" style="width:180px;border-radius:10px; border: 1px solid #FACC15;">
+                        <p style="color:black; margin-top:5px; font-weight:bold;">Confidence: {r.Confidence}%</p>
                     </div>
                     """
                 else:
-                    img_html = "<p style='color:black;'>No Image</p>"
+                    img_html = f"<div style='color:black; text-align:center;'>No Image (ID: {r.Index})</div>"
 
-                iframe = folium.IFrame(html=img_html, width=200, height=220)
+                iframe = folium.IFrame(html=img_html, width=200, height=230)
                 popup = folium.Popup(iframe, max_width=250)
 
                 folium.CircleMarker(
@@ -222,7 +151,6 @@ with col2:
                     fill_opacity=0.8,
                     popup=popup
                 ).add_to(m)
-
         else:
             heat_data = [[r.Longitude, r.Latitude, r.Confidence] for r in df_plot.itertuples()]
             HeatMap(heat_data, radius=18, blur=12).add_to(m)
@@ -241,18 +169,16 @@ with col3:
         st.success("✅ System Clear")
 
 st.markdown("---")
-
-# ---------------- BOTTOM ----------------
 c_low1, c_low2 = st.columns(2)
-
 with c_low1:
     st.markdown("### Confidence Distribution")
-    fig2 = px.histogram(df_plot, x='Confidence', height=320)
-    fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15")
-    st.plotly_chart(fig2, use_container_width=True)
-
+    if not df_plot.empty:
+        fig2 = px.histogram(df_plot, x='Confidence', height=320)
+        fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15")
+        st.plotly_chart(fig2, use_container_width=True)
 with c_low2:
     st.markdown("### Asset Analysis by Type")
-    fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=320)
-    fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15")
-    st.plotly_chart(fig3, use_container_width=True)
+    if not df_plot.empty:
+        fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=320)
+        fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15")
+        st.plotly_chart(fig3, use_container_width=True)
