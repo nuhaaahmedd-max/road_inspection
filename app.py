@@ -20,7 +20,7 @@ color_map = {
     'Lamp_Post': '#FACC15'   
 }
 
-# 3. CSS (كودك الأصلي 100%)
+# 3. CSS (نفس ديزاينك المظبوط)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
@@ -38,7 +38,6 @@ st.markdown("""
     .card { background: #161B22; padding: 10px; border-radius: 12px; border: 1px solid #FACC15; text-align: center; }
     .value { font-size: 22px; font-weight: bold; color: #FACC15; }
     .label { font-size: 12px; color: #9CA3AF; text-transform: uppercase; }
-    .stAlert { background-color: #161B22 !important; border: 1px solid #FACC15 !important; color: #FACC15 !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -47,17 +46,30 @@ st.markdown("""
 def load_data():
     try:
         df = pd.read_csv("road_data.csv")
-        # تنظيف البيانات والتأكد من وجود الأعمدة
-        df = df.dropna(subset=['Latitude','Longitude', 'Image'])
+        df = df.dropna(subset=['Latitude','Longitude'])
         return df
     except:
         return pd.DataFrame()
 
-def get_base64_image(image_file):
+# ✅ دالة البحث المرنة جداً عن الصور
+def get_base64_image(excel_image_name):
     try:
-        img_path = os.path.join("assets", str(image_file).strip())
-        if os.path.exists(img_path):
-            with open(img_path, "rb") as f:
+        if not os.path.exists("assets") or pd.isna(excel_image_name):
+            return None
+        
+        # بننظف الاسم المطلوب
+        target = str(excel_image_name).strip().lower()
+        all_files = os.listdir("assets")
+        
+        # بندور على أي ملف اسمه (بعد التنظيف) يطابق المطلوب
+        match = [f for f in all_files if f.strip().lower() == target]
+        
+        # لو ملقاش تطابق حرفي، بيدور لو الاسم موجود جوه اسم الملف (احتياطي)
+        if not match:
+            match = [f for f in all_files if target in f.lower()]
+
+        if match:
+            with open(os.path.join("assets", match[0]), "rb") as f:
                 return base64.b64encode(f.read()).decode()
     except:
         return None
@@ -65,7 +77,7 @@ def get_base64_image(image_file):
 
 df = load_data()
 
-# ---------------- SIDEBAR ----------------
+# ---------------- SIDEBAR & HEADER ----------------
 st.sidebar.markdown("<h2 style='text-align:center;'>🛠️ FILTERS</h2>", unsafe_allow_html=True)
 view = st.sidebar.radio("MAP DISPLAY MODE:", ["Points", "Heatmap"], index=0)
 if not df.empty:
@@ -74,8 +86,9 @@ if not df.empty:
 else:
     df_plot = df
 
-# ---------------- HEADER & KPIs ----------------
 st.markdown('<div class="main-title">Road Inspection Intelligence</div>', unsafe_allow_html=True)
+
+# ---------------- KPI ROW ----------------
 c1, c2, c3, c4 = st.columns(4)
 def card_html(t, v): return f"<div class='card'><div class='label'>{t}</div><div class='value'>{v}</div></div>" 
 c1.markdown(card_html("TOTAL ASSETS", len(df_plot)), unsafe_allow_html=True)
@@ -96,14 +109,11 @@ with col1:
         st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
-    st.markdown(f"### Spatial View")
+    st.markdown("### Spatial View")
     if not df_plot.empty:
-        # ملاحظة: الترتيب هنا Longitude ثم Latitude كما في طلبك السابق
         m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
         
-        # التعديل الأهم: الربط المباشر جوه الـ loop
         for index, row in df_plot.iterrows():
-            # تحضير الصورة فوراً لكل نقطة
             img_b64 = get_base64_image(row['Image'])
             
             if img_b64:
@@ -112,17 +122,13 @@ with col2:
                     <h5 style="margin:5px;">{row['Object']}</h5>
                     <img src="data:image/jpeg;base64,{img_b64}" style="width:150px; border-radius:5px; border:2px solid #FACC15;">
                     <p style="margin:5px;"><b>Conf: {row['Confidence']}%</b></p>
-                </div>
-                '''
+                </div>'''
             else:
-                html_content = f'<div style="color:black;">Missing: {row["Image"]}</div>'
+                html_content = f'<div style="color:black; padding:10px;">Missing Image:<br>{row["Image"]}</div>'
 
             folium.CircleMarker(
                 location=[row['Longitude'], row['Latitude']],
-                radius=6,
-                color=color_map.get(row['Object'], "#FFF"),
-                fill=True,
-                fill_opacity=0.8,
+                radius=6, color=color_map.get(row['Object'], "#FFF"), fill=True,
                 popup=folium.Popup(folium.IFrame(html_content, width=180, height=220))
             ).add_to(m)
             
@@ -130,7 +136,7 @@ with col2:
 
 with col3:
     st.markdown("### Priority Alerts")
-    critical = cracks[cracks["Confidence"] > 90]
+    critical = cracks[cracks["Confidence"] > 90] if not cracks.empty else pd.DataFrame()
     if not critical.empty:
         for r in critical.head(5).itertuples():
             st.warning(f"⚠️ CRITICAL | {r.Confidence}% Confidence")
