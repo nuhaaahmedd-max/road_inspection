@@ -13,13 +13,13 @@ st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sideb
 
 # 2. Final Color Map
 color_map = {
-    'Clear': '#E6C200',
+    'Clear': '#FFD700',
     'Crack': '#FF0000',
     'Manhole': '#0070FF',
     'Pothole': '#00FF00',
 }
 
-gold_color = "#E6C200"  # UPDATED (أشيك)
+gold_color = "#FFD700" 
 
 # 3. CSS Customization
 st.markdown(f"""
@@ -44,6 +44,7 @@ st.markdown(f"""
         color: {gold_color} !important; font-weight: 800 !important; 
     }}
 
+    /* NEW SIDEBAR STYLE LIKE IMAGE */
     section[data-testid="stSidebar"] h2 {{
         font-size: 20px;
         margin-bottom: 15px;
@@ -129,11 +130,16 @@ def get_random_image_by_type(obj_type):
 
 df = load_data()
 
-# ---------------- SIDEBAR ----------------
+# ---------------- SIDEBAR (UPDATED ONLY) ----------------
 st.sidebar.markdown("## 🛠️ FILTERS")
 
 st.sidebar.markdown("### MAP DISPLAY MODE")
-view_mode = st.sidebar.radio("", ["Points", "Heatmap"], index=0, label_visibility="collapsed")
+view_mode = st.sidebar.radio(
+    "",
+    ["Points", "Heatmap"],
+    index=0,
+    label_visibility="collapsed"
+)
 
 st.sidebar.markdown("### SELECT DEFECT CATEGORY")
 
@@ -165,19 +171,8 @@ with col1:
     st.markdown("### Defect Ratio")
     if not df_plot.empty:
         fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
-        fig1.update_layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            font_color="#FFFFFF",
-            showlegend=True,
-            legend=dict(
-                orientation="h",
-                yanchor="bottom",
-                y=-0.25,
-                xanchor="center",
-                x=0.5,
-                font=dict(size=13, color="#FFFFFF")
-            )
-        )
+        fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=True, 
+                          legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
         st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
@@ -228,25 +223,10 @@ c_low1, c_low2 = st.columns(2)
 with c_low1:
     if not df_plot.empty:
         fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15, height=300)
-        fig2.update_layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            font_color="#FFFFFF",
-            xaxis=dict(title="Confidence", titlefont=dict(size=14), tickfont=dict(size=12)),
-            yaxis=dict(title="Count", titlefont=dict(size=14), tickfont=dict(size=12)),
-            showlegend=False
-        )
+        fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig2, use_container_width=True)
-
 with c_low2:
     if not df_plot.empty:
         fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=300)
-        fig3.update_layout(
-            paper_bgcolor='rgba(0,0,0,0)',
-            plot_bgcolor='rgba(0,0,0,0)',
-            font_color="#FFFFFF",
-            xaxis=dict(title="Defect Type", titlefont=dict(size=14), tickfont=dict(size=12)),
-            yaxis=dict(title="Count", titlefont=dict(size=14), tickfont=dict(size=12)),
-            showlegend=False
-        )
+        fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig3, use_container_width=True)
