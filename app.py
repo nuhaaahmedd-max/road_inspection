@@ -11,45 +11,66 @@ import random
 # 1. Configuration
 st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
 
-# 2. Color Map (الألوان النهائية المعتمدة)
+# 2. Final Color Map (الألوان النهائية المعتمدة)
+# Clear: أصفر | Crack: أحمر | Manhole: أزرق | Pothole: أخضر
 color_map = {
-    'Clear': '#FACC15',      # أصفر
+    'Clear': '#FFD700',      # ذهبي (أصفر شيك)
     'Crack': '#FF0000',      # أحمر
-    'Manhole': '#0000FF',    # أزرق
+    'Manhole': '#0070FF',    # أزرق زاهي
     'Pothole': '#00FF00',    # أخضر
 }
 
-# 3. CSS Customization (Header Dark + Yellow Cards + Black Sidebar)
-st.markdown("""
+# الدرجة الجديدة للأصفر المستخدمة في العناوين والكروت
+gold_color = "#FFD700" 
+
+# 3. CSS Customization (Dark Header + Golden Cards + Custom Sidebar)
+st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
     
-    /* Dark Theme & Header */
-    .stApp { background-color: #0B0E14; color: #FACC15; }
-    header[data-testid="stHeader"] { background-color: #0B0E14 !important; }
+    /* Dark Theme & Full Dark Header */
+    .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
+    header[data-testid="stHeader"] {{ background-color: #0B0E14 !important; visibility: visible !important; }}
     
-    /* Main Title Style */
-    .main-title { 
-        color: #FACC15; font-family: 'Montserrat', sans-serif;
+    /* Main Title Styling */
+    .main-title {{ 
+        color: {gold_color}; font-family: 'Montserrat', sans-serif;
         font-size: 34px; font-weight: 900; text-align: left; 
         padding: 10px 0px 10px 15px; border-bottom: 2px solid #1F2937; 
         margin-bottom: 15px; letter-spacing: 2px;
-        text-transform: uppercase; -webkit-text-stroke: 1.5px #000000;
-        text-shadow: 3px 3px 0px #000000;
-    }
+        text-transform: uppercase; -webkit-text-stroke: 1.2px #000000;
+        text-shadow: 2px 2px 0px #000000;
+    }}
 
-    /* Cards - All Yellow */
-    .card { background: #161B22; padding: 10px; border-radius: 12px; border: 1px solid #FACC15; text-align: center; }
-    .value { font-size: 26px; font-weight: bold; color: #FACC15 !important; }
-    .label { font-size: 13px; color: #FACC15 !important; text-transform: uppercase; font-weight: 800; }
+    /* Sidebar Styling - Dark & Professional */
+    section[data-testid="stSidebar"] {{ background-color: #0B0E14 !important; border-right: 1px solid #1F2937; }}
+    section[data-testid="stSidebar"] .stMarkdown h2, section[data-testid="stSidebar"] label {{ 
+        color: {gold_color} !important; font-weight: 800 !important; 
+    }}
 
-    /* Sidebar Styling */
-    section[data-testid="stSidebar"] { background-color: #0B0E14 !important; border-right: 1px solid #1F2937; }
-    section[data-testid="stSidebar"] .stMarkdown h2 { color: #FACC15; }
-    .stRadio > label { color: #FACC15 !important; font-weight: bold; }
-    
-    /* Map Iframe */
-    iframe { border: 2px solid #FACC15 !important; border-radius: 10px !important; }
+    /* Customizing Radio Buttons to look like Segmented Squares */
+    div[data-testid="stRadio"] > div {{
+        flex-direction: row;
+        gap: 10px;
+    }}
+    div[data-testid="stRadio"] label {{
+        background: #161B22;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        cursor: pointer;
+        transition: 0.3s;
+    }}
+    div[data-testid="stRadio"] label:hover {{ border-color: {gold_color}; }}
+    div[data-testid="stRadio"] div[data-testid="stMarkdownContainer"] p {{ font-size: 14px; }}
+
+    /* Cards - Golden Text and Labels */
+    .card {{ background: #161B22; padding: 12px; border-radius: 12px; border: 1px solid {gold_color}; text-align: center; }}
+    .value {{ font-size: 28px; font-weight: bold; color: {gold_color} !important; }}
+    .label {{ font-size: 12px; color: {gold_color} !important; text-transform: uppercase; font-weight: 900; margin-bottom: 5px; opacity: 0.9; }}
+
+    /* Map Iframe Styling */
+    iframe {{ border: 2px solid {gold_color} !important; border-radius: 12px !important; }}
 </style>
 """, unsafe_allow_html=True)
 
@@ -84,13 +105,15 @@ def get_random_image_by_type(obj_type):
 
 df = load_data()
 
-# ---------------- SIDEBAR (تعديل الـ Sidebar بالكامل) ----------------
-st.sidebar.markdown("<h2 style='text-align:center;'>🛠️ CONTROL PANEL</h2>", unsafe_allow_html=True)
-view_mode = st.sidebar.radio("MAP DISPLAY MODE:", ["Points Map", "Heatmap Overlay"], index=0)
+# ---------------- SIDEBAR ----------------
+st.sidebar.markdown(f"<h2 style='text-align:center; color:{gold_color};'>🛠️ SETTINGS</h2>", unsafe_allow_html=True)
+st.sidebar.write("MAP DISPLAY MODE")
+view_mode = st.sidebar.radio("", ["Points Map", "Heatmap Overlay"], label_visibility="collapsed")
 
 if not df.empty:
     st.sidebar.markdown("---")
-    selected_types = st.sidebar.multiselect("SELECT FEATURES:", options=df["Object"].unique(), default=list(df["Object"].unique()))
+    st.sidebar.write("FILTER BY TYPE")
+    selected_types = st.sidebar.multiselect("", options=df["Object"].unique(), default=list(df["Object"].unique()), label_visibility="collapsed")
     df_plot = df[df["Object"].isin(selected_types)]
 else:
     df_plot = df
@@ -98,10 +121,10 @@ else:
 # ---------------- HEADER ----------------
 st.markdown('<div class="main-title">Road Inspection Intelligence</div>', unsafe_allow_html=True)
 
-# ---------------- KPI ROW (تعديلات الألوان والكروت) ----------------
+# ---------------- KPI ROW ----------------
 c1, c2, c3, c4 = st.columns(4)
 c1.markdown(f"<div class='card'><div class='label'>TOTAL ASSETS</div><div class='value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
-c2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
+c2.markdown(f"<div class='card'><div class='label'>CRACKS FOUND</div><div class='value'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
 c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Pothole'])}</div></div>", unsafe_allow_html=True)
 c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
 
@@ -112,33 +135,31 @@ with col1:
     st.markdown("### Defect Ratio")
     if not df_plot.empty:
         fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
-        fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15", showlegend=True, 
+        fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=True, 
                           legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
         st.plotly_chart(fig1, use_container_width=True)
 
 with col2:
-    st.markdown("### Spatial Analysis Map")
+    st.markdown("### Spatial View")
     if not df_plot.empty:
         m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
         
         if view_mode == "Points Map":
             for index, row in df_plot.iterrows():
                 img_b64 = get_random_image_by_type(row['Object'])
-                obj_id = row.get('OBJECTID', row.get('FID', index))
                 color = color_map.get(row['Object'], "#FFF")
                 
                 if img_b64 == "CLEAR_MODE":
-                    html_content = f'<div style="text-align:center;color:black;padding:10px;">ID: {obj_id}<br><b style="color:#FACC15; font-size:16px;">✅ ROAD IS CLEAR</b></div>'
+                    html_content = f'<div style="text-align:center;color:black;padding:10px;"><b>✅ STATUS: CLEAR</b><br>Safe Road Zone</div>'
                 elif img_b64:
                     html_content = f'''
                     <div style="text-align:center; font-family: Montserrat; color:black;">
-                        <h6 style="margin:2px; color:gray;">ID: {obj_id}</h6>
                         <h5 style="margin:5px; color:{color};">{row['Object']}</h5>
-                        <img src="data:image/jpeg;base64,{img_b64}" style="width:150px; border-radius:5px; border:2px solid {color};">
-                        <p style="margin:5px;"><b>Confidence: {row['Confidence']}%</b></p>
+                        <img src="data:image/jpeg;base64,{{img_b64}}" style="width:150px; border-radius:8px; border:2px solid {{color}};">
+                        <p style="margin:5px;"><b>Confidence: {{row['Confidence']}}%</b></p>
                     </div>'''
                 else:
-                    html_content = f'<div style="color:black;padding:10px;">ID: {obj_id}<br>Type: {row["Object"]}<br><b>Asset Missing</b></div>'
+                    html_content = f'<div style="color:black;padding:10px;">Type: {{row["Object"]}}<br>Sample Loading...</div>'
 
                 folium.CircleMarker(
                     location=[row['Longitude'], row['Latitude']],
@@ -146,7 +167,6 @@ with col2:
                     popup=folium.Popup(folium.IFrame(html_content, width=180, height=220))
                 ).add_to(m)
         else:
-            # Heatmap Mode
             heat_data = [[row['Longitude'], row['Latitude']] for index, row in df_plot.iterrows()]
             HeatMap(heat_data, radius=15, blur=10).add_to(m)
             
@@ -157,25 +177,20 @@ with col3:
     critical = df_plot[(df_plot['Object'] != 'Clear') & (df_plot['Confidence'] > 90)]
     if not critical.empty:
         for r in critical.head(5).itertuples():
-            st.error(f"⚠️ HIGH SEVERITY: {r.Object}")
+            st.error(f"⚠️ CRITICAL: {r.Object}")
     else:
-        st.success("✅ Analysis Stable")
+        st.success("✅ System Stable")
 
 # ---------------- BOTTOM ROW ----------------
 st.markdown("---")
 c_low1, c_low2 = st.columns(2)
 with c_low1:
-    st.markdown("### Confidence Metrics")
     if not df_plot.empty:
-        fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, 
-                           nbins=15, height=300)
-        fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15", plot_bgcolor='rgba(0,0,0,0)', 
-                          showlegend=False, yaxis_title="Point Count", xaxis_title="Confidence %")
+        fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15, height=300)
+        fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig2, use_container_width=True)
 with c_low2:
-    st.markdown("### Defect Summary")
     if not df_plot.empty:
         fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=300)
-        fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15", plot_bgcolor='rgba(0,0,0,0)', 
-                          showlegend=False, yaxis_title="Total Count")
+        fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig3, use_container_width=True)
