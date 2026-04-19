@@ -162,4 +162,71 @@ c1, c2, c3, c4 = st.columns(4)
 c1.markdown(f"<div class='card'><div class='label'>TOTAL ASSETS</div><div class='value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
 c2.markdown(f"<div class='card'><div class='label'>CRACKS FOUND</div><div class='value'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
 c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Pothole'])}</div></div>", unsafe_allow_html=True)
-c4.markdown(f"<div class='card'><div
+c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
+
+# ---------------- MAIN CONTENT ----------------
+col1, col2, col3 = st.columns([1, 1.8, 1])
+
+with col1:
+    st.markdown("### Defect Ratio")
+    if not df_plot.empty:
+        fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
+        fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=True, 
+                          legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
+        st.plotly_chart(fig1, use_container_width=True)
+
+with col2:
+    st.markdown("### Spatial View")
+    if not df_plot.empty:
+        m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
+        
+        if view_mode == "Points":
+            for index, row in df_plot.iterrows():
+                img_b64 = get_random_image_by_type(row['Object'])
+                color = color_map.get(row['Object'], "#FFF")
+                
+                if img_b64 == "CLEAR_MODE":
+                    html_content = f'<div style="text-align:center;color:black;padding:10px;"><b>✅ STATUS: CLEAR</b><br>Safe Road Zone</div>'
+                elif img_b64:
+                    html_content = f'''
+                    <div style="text-align:center; font-family: Montserrat; color:black;">
+                        <h5 style="margin:5px; color:{color};">{row['Object']}</h5>
+                        <img src="data:image/jpeg;base64,{img_b64}" style="width:150px; border-radius:8px; border:2px solid {color};">
+                        <p style="margin:5px;"><b>Confidence: {row['Confidence']}%</b></p>
+                    </div>'''
+                else:
+                    html_content = f'<div style="color:black;padding:10px;">Type: {row["Object"]}<br>Sample Loading...</div>'
+
+                folium.CircleMarker(
+                    location=[row['Longitude'], row['Latitude']],
+                    radius=8, color=color, fill=True, fill_opacity=0.9,
+                    popup=folium.Popup(folium.IFrame(html_content, width=180, height=220))
+                ).add_to(m)
+        else:
+            heat_data = [[row['Longitude'], row['Latitude']] for index, row in df_plot.iterrows()]
+            HeatMap(heat_data, radius=15, blur=10).add_to(m)
+            
+        st_folium(m, height=320, width="100%", key="main_map")
+
+with col3:
+    st.markdown("### Priority Alerts")
+    critical = df_plot[(df_plot['Object'] != 'Clear') & (df_plot['Confidence'] > 90)]
+    if not critical.empty:
+        for r in critical.head(5).itertuples():
+            st.error(f"⚠️ CRITICAL: {r.Object}")
+    else:
+        st.success("✅ System Stable")
+
+# ---------------- BOTTOM ROW ----------------
+st.markdown("---")
+c_low1, c_low2 = st.columns(2)
+with c_low1:
+    if not df_plot.empty:
+        fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15, height=300)
+        fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
+        st.plotly_chart(fig2, use_container_width=True)
+with c_low2:
+    if not df_plot.empty:
+        fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=300)
+        fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
+        st.plotly_chart(fig3, use_container_width=True)
