@@ -10,12 +10,12 @@ import random
 # 1. Configuration
 st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
 
-# 2. Color Map (الألوان المطلوبة: الأصفر والبينك هما الأساس)
+# 2. Color Map (التعديل النهائي للألوان حسب طلبك)
 color_map = {
-    'Crack': '#FF69B4',      # بينك فاقع (Hot Pink) - هيظهر كتير
-    'Manhole': '#FACC15',    # أصفر زاهي - هيظهر كتير
-    'Pothole': '#60A5FA',    # أزرق (Sky Blue) - هيظهر قليل
-    'Clear': '#34D399',      # أخضر هادي - هيظهر قليل
+    'Clear': '#FACC15',      # أصفر
+    'Crack': '#FF69B4',      # بينك
+    'Manhole': '#34D399',    # أخضر
+    'Pothole': '#60A5FA',    # أزرق
 }
 
 # 3. CSS Customization
@@ -33,7 +33,7 @@ st.markdown("""
     }
     iframe { border: 2px solid #FACC15 !important; border-radius: 10px !important; }
     .card { background: #161B22; padding: 10px; border-radius: 12px; border: 1px solid #FACC15; text-align: center; }
-    .value { font-size: 24px; font-weight: bold; color: #FACC15; }
+    .value { font-size: 24px; font-weight: bold; }
     .label { font-size: 12px; color: #9CA3AF; text-transform: uppercase; }
 </style>
 """, unsafe_allow_html=True)
@@ -84,10 +84,11 @@ st.markdown('<div class="main-title">Road Inspection Intelligence</div>', unsafe
 
 # ---------------- KPI ROW ----------------
 c1, c2, c3, c4 = st.columns(4)
-c1.markdown(f"<div class='card'><div class='label'>TOTAL POINTS</div><div class='value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
+c1.markdown(f"<div class='card'><div class='label'>TOTAL POINTS</div><div class='value' style='color:#FFFFFF;'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
 c2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value' style='color:#FF69B4;'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
-c3.markdown(f"<div class='card'><div class='label'>RELIABILITY</div><div class='value'>{df_plot['Confidence'].mean() if not df_plot.empty else 0:.1f}%</div></div>", unsafe_allow_html=True)
-c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value' style='color:#FACC15;'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
+# الكارت التالت بقى Potholes
+c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value' style='color:#60A5FA;'>{len(df_plot[df_plot['Object']=='Pothole'])}</div></div>", unsafe_allow_html=True)
+c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value' style='color:#34D399;'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
 
 # ---------------- MAIN CONTENT ----------------
 col1, col2, col3 = st.columns([1, 1.8, 1])
@@ -95,7 +96,6 @@ col1, col2, col3 = st.columns([1, 1.8, 1])
 with col1:
     st.markdown("### Defect Distribution")
     if not df_plot.empty:
-        # شارت الدونات بالألوان الجديدة
         fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
         fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15", showlegend=True, 
                           legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
@@ -134,7 +134,7 @@ with col3:
     critical = df_plot[(df_plot['Object'] != 'Clear') & (df_plot['Confidence'] > 90)]
     if not critical.empty:
         for r in critical.head(5).itertuples():
-            st.error(f"⚠️ HIGH CONFIDENCE: {r.Object}")
+            st.error(f"⚠️ SEVERE: {r.Object}")
     else:
         st.success("✅ Area Analysis Stable")
 
@@ -143,14 +143,12 @@ st.markdown("---")
 c_low1, c_low2 = st.columns(2)
 with c_low1:
     if not df_plot.empty:
-        # الهيستوجرام بالألوان الجديدة
         fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, 
                            nbins=20, barmode='group', height=300)
         fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15", plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig2, use_container_width=True)
 with c_low2:
     if not df_plot.empty:
-        # البار شارت بالألوان الجديدة
         fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=300)
         fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color="#FACC15", plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig3, use_container_width=True)
