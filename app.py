@@ -8,9 +8,10 @@ import base64
 import os
 import random
 
-# ---------------- CONFIG ----------------
-st.set_page_config(layout="wide", page_title="Road Inspection AI")
+# 1. Configuration
+st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
 
+# 2. Final Color Map
 color_map = {
     'Clear': '#FFD700',
     'Crack': '#FF0000',
@@ -18,124 +19,214 @@ color_map = {
     'Pothole': '#00FF00',
 }
 
-gold_color = "#FFD700"
+gold_color = "#FFD700" 
 
-# ---------------- STYLE ----------------
+# 3. CSS Customization
 st.markdown(f"""
 <style>
-.stApp {{background-color:#0B0E14;color:{gold_color};}}
-.card {{
-    background:#161B22;
-    padding:15px;
-    border-radius:12px;
-    border:1px solid {gold_color};
-    text-align:center;
-    height:100%;
-}}
-.value {{font-size:26px;font-weight:bold;}}
-.label {{font-size:12px;opacity:0.8;}}
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
+    
+    .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
+    header[data-testid="stHeader"] {{ background-color: #0B0E14 !important; visibility: visible !important; }}
+    
+    .main-title {{ 
+        color: {gold_color}; font-family: 'Montserrat', sans-serif;
+        font-size: 34px; font-weight: 900; text-align: left; 
+        padding: 10px 0px 10px 15px; border-bottom: 2px solid #1F2937; 
+        margin-bottom: 15px; letter-spacing: 2px;
+        text-transform: uppercase; -webkit-text-stroke: 1.2px #000000;
+        text-shadow: 2px 2px 0px #000000;
+    }}
+
+    section[data-testid="stSidebar"] {{ background-color: #0B0E14 !important; border-right: 1px solid #1F2937; }}
+    section[data-testid="stSidebar"] .stMarkdown h2, 
+    section[data-testid="stSidebar"] label {{ 
+        color: {gold_color} !important; font-weight: 800 !important; 
+    }}
+
+    /* NEW SIDEBAR STYLE LIKE IMAGE */
+    section[data-testid="stSidebar"] h2 {{
+        font-size: 20px;
+        margin-bottom: 15px;
+    }}
+
+    section[data-testid="stSidebar"] h3 {{
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        color: {gold_color};
+    }}
+
+    div[data-testid="stRadio"] > div {{
+        flex-direction: column;
+        gap: 8px;
+    }}
+
+    div[data-testid="stRadio"] label {{
+        background: #161B22;
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid #333;
+        cursor: pointer;
+        transition: 0.3s;
+    }}
+
+    div[data-testid="stRadio"] label:hover {{
+        border-color: {gold_color};
+    }}
+
+    div[data-baseweb="select"] span {{
+        background-color: #161B22 !important;
+        border: 1px solid {gold_color} !important;
+        color: {gold_color} !important;
+        border-radius: 6px !important;
+        padding: 2px 6px !important;
+        font-size: 12px !important;
+    }}
+
+    div[data-baseweb="select"] > div {{
+        background-color: #0B0E14 !important;
+        border: 1px solid {gold_color} !important;
+        border-radius: 6px !important;
+    }}
+
+    .card {{ background: #161B22; padding: 12px; border-radius: 12px; border: 1px solid {gold_color}; text-align: center; }}
+    .value {{ font-size: 28px; font-weight: bold; color: {gold_color} !important; }}
+    .label {{ font-size: 12px; color: {gold_color} !important; text-transform: uppercase; font-weight: 900; margin-bottom: 5px; opacity: 0.9; }}
+
+    iframe {{ border: 2px solid {gold_color} !important; border-radius: 12px !important; }}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- DATA ----------------
-@st.cache_data
+# ---------------- DATA LOADING ----------------
+@st.cache_data(ttl=300)
 def load_data():
     try:
         df = pd.read_csv("road_data.csv")
+        valid_objects = ['Crack', 'Pothole', 'Manhole', 'Clear']
+        df = df[df['Object'].isin(valid_objects)]
         df = df.dropna(subset=['Latitude', 'Longitude'])
         return df
     except:
         return pd.DataFrame()
 
+def get_random_image_by_type(obj_type):
+    if obj_type == 'Clear': return "CLEAR_MODE"
+    try:
+        base_path = "assets"
+        target_folder = str(obj_type).strip()
+        full_path = os.path.join(base_path, target_folder)
+        if not os.path.exists(full_path):
+            full_path = os.path.join(base_path, target_folder.lower())
+        if os.path.exists(full_path):
+            images = [f for f in os.listdir(full_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+            if images:
+                selected = random.choice(images)
+                with open(os.path.join(full_path, selected), "rb") as f:
+                    return base64.b64encode(f.read()).decode()
+    except: return None
+    return None
+
 df = load_data()
 
-# ---------------- SIDEBAR ----------------
-st.sidebar.title("Filters")
+# ---------------- SIDEBAR (UPDATED ONLY) ----------------
+st.sidebar.markdown("## 🛠️ FILTERS")
 
-view_mode = st.sidebar.radio("Map Mode", ["Points", "Heatmap"])
+st.sidebar.markdown("### MAP DISPLAY MODE")
+view_mode = st.sidebar.radio(
+    "",
+    ["Points", "Heatmap"],
+    index=0,
+    label_visibility="collapsed"
+)
+
+st.sidebar.markdown("### SELECT DEFECT CATEGORY")
 
 if not df.empty:
-    selected = st.sidebar.multiselect(
-        "Category",
-        df["Object"].unique(),
-        default=df["Object"].unique()
+    selected_types = st.sidebar.multiselect(
+        "",
+        options=df["Object"].unique(),
+        default=list(df["Object"].unique()),
+        label_visibility="collapsed"
     )
-    df_plot = df[df["Object"].isin(selected)]
+    df_plot = df[df["Object"].isin(selected_types)]
 else:
     df_plot = df
 
 # ---------------- HEADER ----------------
-st.title("🚧 Road Inspection Dashboard")
+st.markdown('<div class="main-title">Road Inspection Intelligence</div>', unsafe_allow_html=True)
 
 # ---------------- KPI ROW ----------------
-k1, k2, k3, k4 = st.columns(4)
+c1, c2, c3, c4 = st.columns(4)
+c1.markdown(f"<div class='card'><div class='label'>TOTAL ASSETS</div><div class='value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
+c2.markdown(f"<div class='card'><div class='label'>CRACKS FOUND</div><div class='value'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
+c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Pothole'])}</div></div>", unsafe_allow_html=True)
+c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
 
-k1.markdown(f"<div class='card'><div class='label'>TOTAL</div><div class='value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
-k2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
-k3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Pothole'])}</div></div>", unsafe_allow_html=True)
-k4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
+# ---------------- MAIN CONTENT ----------------
+col1, col2, col3 = st.columns([1, 1.8, 1])
 
-st.markdown("---")
-
-# ---------------- ROW 1 ----------------
-r1c1, r1c2, r1c3 = st.columns(3)
-
-with r1c1:
+with col1:
     st.markdown("### Defect Ratio")
     if not df_plot.empty:
-        fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map)
-        fig1.update_layout(height=300)
+        fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
+        fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=True, 
+                          legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
         st.plotly_chart(fig1, use_container_width=True)
 
-with r1c2:
-    st.markdown("### Map")
+with col2:
+    st.markdown("### Spatial View")
     if not df_plot.empty:
-        m = folium.Map(
-            location=[df_plot['Latitude'].mean(), df_plot['Longitude'].mean()],
-            zoom_start=14,
-            tiles="CartoDB dark_matter"
-        )
-
+        m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
+        
         if view_mode == "Points":
-            for _, row in df_plot.iterrows():
+            for index, row in df_plot.iterrows():
+                img_b64 = get_random_image_by_type(row['Object'])
+                color = color_map.get(row['Object'], "#FFF")
+                
+                if img_b64 == "CLEAR_MODE":
+                    html_content = f'<div style="text-align:center;color:black;padding:10px;"><b>✅ STATUS: CLEAR</b><br>Safe Road Zone</div>'
+                elif img_b64:
+                    html_content = f'''
+                    <div style="text-align:center; font-family: Montserrat; color:black;">
+                        <h5 style="margin:5px; color:{color};">{row['Object']}</h5>
+                        <img src="data:image/jpeg;base64,{img_b64}" style="width:150px; border-radius:8px; border:2px solid {color};">
+                        <p style="margin:5px;"><b>Confidence: {row['Confidence']}%</b></p>
+                    </div>'''
+                else:
+                    html_content = f'<div style="color:black;padding:10px;">Type: {row["Object"]}<br>Sample Loading...</div>'
+
                 folium.CircleMarker(
-                    location=[row['Latitude'], row['Longitude']],
-                    radius=6,
-                    color=color_map.get(row['Object']),
-                    fill=True
+                    location=[row['Longitude'], row['Latitude']],
+                    radius=8, color=color, fill=True, fill_opacity=0.9,
+                    popup=folium.Popup(folium.IFrame(html_content, width=180, height=220))
                 ).add_to(m)
         else:
-            heat = [[r['Latitude'], r['Longitude']] for _, r in df_plot.iterrows()]
-            HeatMap(heat).add_to(m)
+            heat_data = [[row['Longitude'], row['Latitude']] for index, row in df_plot.iterrows()]
+            HeatMap(heat_data, radius=15, blur=10).add_to(m)
+            
+        st_folium(m, height=320, width="100%", key="main_map")
 
-        st_folium(m, height=300)
-
-with r1c3:
-    st.markdown("### Alerts")
+with col3:
+    st.markdown("### Priority Alerts")
     critical = df_plot[(df_plot['Object'] != 'Clear') & (df_plot['Confidence'] > 90)]
     if not critical.empty:
         for r in critical.head(5).itertuples():
-            st.error(f"{r.Object} detected")
+            st.error(f"⚠️ CRITICAL: {r.Object}")
     else:
-        st.success("No critical issues")
+        st.success("✅ System Stable")
 
-# ---------------- ROW 2 ----------------
-r2c1, r2c2, r2c3 = st.columns(3)
-
-with r2c1:
-    st.markdown("### Confidence Distribution")
+# ---------------- BOTTOM ROW ----------------
+st.markdown("---")
+c_low1, c_low2 = st.columns(2)
+with c_low1:
     if not df_plot.empty:
-        fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map)
-        fig2.update_layout(height=300)
+        fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15, height=300)
+        fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig2, use_container_width=True)
-
-with r2c2:
-    st.markdown("### Count by Type")
+with c_low2:
     if not df_plot.empty:
-        fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map)
-        fig3.update_layout(height=300)
+        fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=300)
+        fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
         st.plotly_chart(fig3, use_container_width=True)
-
-with r2c3:
-    st.markdown("### Summary")
-    st.info("System running normally 🚀")
