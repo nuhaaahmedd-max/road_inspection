@@ -2,231 +2,146 @@ import streamlit as st
 import pandas as pd
 import folium
 from streamlit_folium import st_folium
-from folium.plugins import HeatMap
 import plotly.express as px
 import base64
 import os
 import random
 
-# 1. Configuration
-st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
+# 1. إعداد الصفحة ومنع السكرول
+st.set_page_config(layout="wide", page_title="Road Inspection Intelligence", initial_sidebar_state="expanded")
 
-# 2. Final Color Map
-color_map = {
-    'Clear': '#FFD700',
-    'Crack': '#FF0000',
-    'Manhole': '#0070FF',
-    'Pothole': '#00FF00',
-}
+# اللون النيون اللي اخترناه (Lemon Neon)
+neon_yellow = "#CCFF00" 
+color_map = {'Clear': neon_yellow, 'Crack': '#FF0000', 'Manhole': '#0070FF', 'Pothole': '#00FF00'}
 
-gold_color = "#FFD700" 
-
-# 3. CSS Customization
+# 2. CSS متقدم (لمسات جمالية: Glow + Dark Sidebar + No Scroll)
 st.markdown(f"""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&display=swap');
+    /* خلفية التطبيق ومنع السكرول */
+    .stApp {{ background-color: #0B0E14; color: {neon_yellow}; overflow: hidden; }}
+    .main .block-container {{ padding: 0.5rem 1.5rem 0rem 1.5rem !important; }}
     
-    .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
-    header[data-testid="stHeader"] {{ background-color: #0B0E14 !important; visibility: visible !important; }}
+    /* توهج نيون للعناوين */
+    h3, h4 {{ 
+        color: {neon_yellow} !important; 
+        text-shadow: 0 0 10px rgba(204, 255, 0, 0.5);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }}
     
-    .main-title {{ 
-        color: {gold_color}; font-family: 'Montserrat', sans-serif;
-        font-size: 34px; font-weight: 900; text-align: left; 
-        padding: 10px 0px 10px 15px; border-bottom: 2px solid #1F2937; 
-        margin-bottom: 15px; letter-spacing: 2px;
-        text-transform: uppercase; -webkit-text-stroke: 1.2px #000000;
-        text-shadow: 2px 2px 0px #000000;
+    /* كروت الـ KPI مع تأثير التوهج السفلي */
+    .kpi-card {{
+        background-color: #161B22; 
+        border-bottom: 3px solid {neon_yellow};
+        box-shadow: 0px 4px 10px rgba(204, 255, 0, 0.1);
+        padding: 8px; border-radius: 8px; text-align: center; margin-bottom: 10px;
+    }}
+    .kpi-value {{ font-size: 24px !important; font-weight: 900; color: {neon_yellow}; }}
+    .kpi-label {{ font-size: 10px !important; opacity: 0.8; font-weight: 700; text-transform: uppercase; }}
+    
+    /* حاويات الشارتات بتصميم قزازي (Glassmorphism) بسيط */
+    .chart-container {{
+        background-color: #161B22; 
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px; padding: 10px; margin-bottom: 8px;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.4);
     }}
 
-    section[data-testid="stSidebar"] {{ background-color: #0B0E14 !important; border-right: 1px solid #1F2937; }}
-    section[data-testid="stSidebar"] .stMarkdown h2, 
-    section[data-testid="stSidebar"] label {{ 
-        color: {gold_color} !important; font-weight: 800 !important; 
-    }}
-
-    /* NEW SIDEBAR STYLE LIKE IMAGE */
-    section[data-testid="stSidebar"] h2 {{
-        font-size: 20px;
-        margin-bottom: 15px;
-    }}
-
-    section[data-testid="stSidebar"] h3 {{
-        font-size: 13px;
-        letter-spacing: 1px;
-        margin-top: 15px;
-        margin-bottom: 8px;
-        color: {gold_color};
-    }}
-
-    div[data-testid="stRadio"] > div {{
-        flex-direction: column;
-        gap: 8px;
-    }}
-
-    div[data-testid="stRadio"] label {{
-        background: #161B22;
-        padding: 10px;
-        border-radius: 6px;
-        border: 1px solid #333;
-        cursor: pointer;
-        transition: 0.3s;
-    }}
-
-    div[data-testid="stRadio"] label:hover {{
-        border-color: {gold_color};
-    }}
-
-    div[data-baseweb="select"] span {{
-        background-color: #161B22 !important;
-        border: 1px solid {gold_color} !important;
-        color: {gold_color} !important;
-        border-radius: 6px !important;
-        padding: 2px 6px !important;
-        font-size: 12px !important;
-    }}
-
-    div[data-baseweb="select"] > div {{
-        background-color: #0B0E14 !important;
-        border: 1px solid {gold_color} !important;
-        border-radius: 6px !important;
-    }}
-
-    .card {{ background: #161B22; padding: 12px; border-radius: 12px; border: 1px solid {gold_color}; text-align: center; }}
-    .value {{ font-size: 28px; font-weight: bold; color: {gold_color} !important; }}
-    .label {{ font-size: 12px; color: {gold_color} !important; text-transform: uppercase; font-weight: 900; margin-bottom: 5px; opacity: 0.9; }}
-
-    iframe {{ border: 2px solid {gold_color} !important; border-radius: 12px !important; }}
+    /* تصميم السايد بار */
+    section[data-testid="stSidebar"] {{ background-color: #0B0E14 !important; border-right: 1px solid #222; }}
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- DATA LOADING ----------------
-@st.cache_data(ttl=300)
-def load_data():
+# 3. دالة معالجة الصور (الحل التقني لظهور الصور)
+def get_base64_img(obj_type):
+    if obj_type == 'Clear': return "CLEAR"
     try:
-        df = pd.read_csv("road_data.csv")
-        valid_objects = ['Crack', 'Pothole', 'Manhole', 'Clear']
-        df = df[df['Object'].isin(valid_objects)]
-        df = df.dropna(subset=['Latitude', 'Longitude'])
-        return df
-    except:
-        return pd.DataFrame()
-
-def get_random_image_by_type(obj_type):
-    if obj_type == 'Clear': return "CLEAR_MODE"
-    try:
-        base_path = "assets"
-        target_folder = str(obj_type).strip()
-        full_path = os.path.join(base_path, target_folder)
-        if not os.path.exists(full_path):
-            full_path = os.path.join(base_path, target_folder.lower())
-        if os.path.exists(full_path):
-            images = [f for f in os.listdir(full_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-            if images:
-                selected = random.choice(images)
-                with open(os.path.join(full_path, selected), "rb") as f:
+        folder = os.path.join("assets", str(obj_type))
+        if os.path.exists(folder):
+            imgs = [f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+            if imgs:
+                with open(os.path.join(folder, random.choice(imgs)), "rb") as f:
                     return base64.b64encode(f.read()).decode()
     except: return None
     return None
 
+# 4. تحميل البيانات
+@st.cache_data(show_spinner=False)
+def load_data():
+    try:
+        df = pd.read_csv("road_data.csv")
+        return df[df['Object'].isin(['Clear', 'Crack', 'Manhole', 'Pothole'])].dropna(subset=['Latitude', 'Longitude'])
+    except: return pd.DataFrame()
+
 df = load_data()
 
-# ---------------- SIDEBAR (UPDATED ONLY) ----------------
-st.sidebar.markdown("## 🛠️ FILTERS")
-
-st.sidebar.markdown("### MAP DISPLAY MODE")
-view_mode = st.sidebar.radio(
-    "",
-    ["Points", "Heatmap"],
-    index=0,
-    label_visibility="collapsed"
-)
-
-st.sidebar.markdown("### SELECT DEFECT CATEGORY")
-
-if not df.empty:
-    selected_types = st.sidebar.multiselect(
-        "",
-        options=df["Object"].unique(),
-        default=list(df["Object"].unique()),
-        label_visibility="collapsed"
-    )
-    df_plot = df[df["Object"].isin(selected_types)]
-else:
-    df_plot = df
+# ---------------- SIDEBAR ----------------
+with st.sidebar:
+    st.markdown(f"<h2 style='color:{neon_yellow}'>🛠️ CONTROL</h2>", unsafe_allow_html=True)
+    selected_types = st.multiselect("FILTER FEATURES", ['Clear', 'Crack', 'Manhole', 'Pothole'], default=['Clear', 'Crack', 'Manhole', 'Pothole'])
+    df_plot = df[df["Object"].isin(selected_types)] if not df.empty else df
 
 # ---------------- HEADER ----------------
-st.markdown('<div class="main-title">Road Inspection Intelligence</div>', unsafe_allow_html=True)
+st.markdown(f"<h2 style='text-align:center; margin:0; padding-bottom:10px;'>ROAD INSPECTION INTELLIGENCE</h2>", unsafe_allow_html=True)
 
 # ---------------- KPI ROW ----------------
-c1, c2, c3, c4 = st.columns(4)
-c1.markdown(f"<div class='card'><div class='label'>TOTAL ASSETS</div><div class='value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
-c2.markdown(f"<div class='card'><div class='label'>CRACKS FOUND</div><div class='value'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
-c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Pothole'])}</div></div>", unsafe_allow_html=True)
-c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
+k1, k2, k3, k4 = st.columns(4)
+with k1: st.markdown(f"<div class='kpi-card'><div class='kpi-label'>TOTAL DETECTED</div><div class='kpi-value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
+with k2: st.markdown(f"<div class='kpi-card'><div class='kpi-label'>CRACKS</div><div class='kpi-value' style='color:#FF0000;'>{len(df_plot[df_plot['Object']=='Crack'])}</div></div>", unsafe_allow_html=True)
+with k3: st.markdown(f"<div class='kpi-card'><div class='kpi-label'>POTHOLES</div><div class='kpi-value' style='color:#00FF00;'>{len(df_plot[df_plot['Object']=='Pothole'])}</div></div>", unsafe_allow_html=True)
+with k4: st.markdown(f"<div class='kpi-card'><div class='kpi-label'>MANHOLES</div><div class='kpi-value' style='color:#0070FF;'>{len(df_plot[df_plot['Object']=='Manhole'])}</div></div>", unsafe_allow_html=True)
 
-# ---------------- MAIN CONTENT ----------------
-col1, col2, col3 = st.columns([1, 1.8, 1])
+# ---------------- MAIN LAYOUT ----------------
+m_col1, m_col2, m_col3 = st.columns([1, 2.2, 1])
 
-with col1:
-    st.markdown("### Defect Ratio")
+with m_col2:
+    st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
     if not df_plot.empty:
-        fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map, height=320)
-        fig1.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=True, 
-                          legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5))
-        st.plotly_chart(fig1, use_container_width=True)
-
-with col2:
-    st.markdown("### Spatial View")
-    if not df_plot.empty:
+        # استخدام CartoDB Dark Matter لخريطة سودة فخمة
         m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
         
-        if view_mode == "Points":
-            for index, row in df_plot.iterrows():
-                img_b64 = get_random_image_by_type(row['Object'])
-                color = color_map.get(row['Object'], "#FFF")
-                
-                if img_b64 == "CLEAR_MODE":
-                    html_content = f'<div style="text-align:center;color:black;padding:10px;"><b>✅ STATUS: CLEAR</b><br>Safe Road Zone</div>'
-                elif img_b64:
-                    html_content = f'''
-                    <div style="text-align:center; font-family: Montserrat; color:black;">
-                        <h5 style="margin:5px; color:{color};">{row['Object']}</h5>
-                        <img src="data:image/jpeg;base64,{img_b64}" style="width:150px; border-radius:8px; border:2px solid {color};">
-                        <p style="margin:5px;"><b>Confidence: {row['Confidence']}%</b></p>
-                    </div>'''
-                else:
-                    html_content = f'<div style="color:black;padding:10px;">Type: {row["Object"]}<br>Sample Loading...</div>'
-
-                folium.CircleMarker(
-                    location=[row['Longitude'], row['Latitude']],
-                    radius=8, color=color, fill=True, fill_opacity=0.9,
-                    popup=folium.Popup(folium.IFrame(html_content, width=180, height=220))
-                ).add_to(m)
-        else:
-            heat_data = [[row['Longitude'], row['Latitude']] for index, row in df_plot.iterrows()]
-            HeatMap(heat_data, radius=15, blur=10).add_to(m)
+        for _, row in df_plot.iterrows():
+            img_data = get_base64_img(row['Object'])
+            color = color_map.get(row['Object'], "#FFF")
             
-        st_folium(m, height=320, width="100%", key="main_map")
+            if img_data == "CLEAR":
+                html = f'<div style="text-align:center; color:black; font-family:sans-serif;"><b>✅ STATUS: CLEAR</b></div>'
+            elif img_data:
+                html = f'''
+                <div style="text-align:center; color:black; font-family:sans-serif; width:170px;">
+                    <b style="color:{color}; font-size:15px;">{row['Object']}</b><br>
+                    <img src="data:image/jpeg;base64,{img_data}" width="160" style="border-radius:8px; margin-top:8px; border:2px solid {color};">
+                    <p style="margin-top:5px; font-size:12px;">Confidence: <b>{row['Confidence']}%</b></p>
+                </div>'''
+            else:
+                html = f'<div style="color:black; padding:5px;">{row["Object"]} (Point)</div>'
+            
+            folium.CircleMarker(
+                location=[row['Longitude'], row['Latitude']], radius=6, color=color, fill=True, fill_opacity=0.85,
+                popup=folium.Popup(folium.IFrame(html, width=190, height=210))
+            ).add_to(m)
+        st_folium(m, width="100%", height=420)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-with col3:
-    st.markdown("### Priority Alerts")
-    critical = df_plot[(df_plot['Object'] != 'Clear') & (df_plot['Confidence'] > 90)]
-    if not critical.empty:
-        for r in critical.head(5).itertuples():
-            st.error(f"⚠️ CRITICAL: {r.Object}")
-    else:
-        st.success("✅ System Stable")
+# --- الأعمدة الجانبية ---
+with m_col1:
+    st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+    st.markdown("#### Distribution Ratio")
+    st.plotly_chart(px.pie(df_plot, names='Object', hole=0.5, color='Object', color_discrete_map=color_map).update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', font_color=neon_yellow, height=200, margin=dict(t=0, b=0, l=0, r=0)), use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+    st.markdown("#### Confidence Analysis")
+    st.plotly_chart(px.histogram(df_plot, x='Confidence', nbins=10, color_discrete_sequence=[neon_yellow]).update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color=neon_yellow, height=180, margin=dict(t=10, b=0, l=0, r=0)), use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------------- BOTTOM ROW ----------------
-st.markdown("---")
-c_low1, c_low2 = st.columns(2)
-with c_low1:
-    if not df_plot.empty:
-        fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15, height=300)
-        fig2.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
-        st.plotly_chart(fig2, use_container_width=True)
-with c_low2:
-    if not df_plot.empty:
-        fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map, height=300)
-        fig3.update_layout(paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, plot_bgcolor='rgba(0,0,0,0)', showlegend=False)
-        st.plotly_chart(fig3, use_container_width=True)
+with m_col3:
+    st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+    st.markdown("#### Defect Counts")
+    st.plotly_chart(px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map).update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color=neon_yellow, height=200, margin=dict(t=0, b=0, l=0, r=0)), use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    st.markdown("<div class='chart-container'>", unsafe_allow_html=True)
+    st.markdown("#### Real-time Alerts")
+    if len(df_plot[df_plot['Confidence'] > 90]) > 0: st.error("🚨 HIGH SEVERITY DETECTED")
+    else: st.success("✔️ SYSTEM STABLE")
+    st.markdown("</div>", unsafe_allow_html=True)
