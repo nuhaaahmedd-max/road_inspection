@@ -46,6 +46,11 @@ st.markdown(f"""
 
     /* إخفاء الهوامش غير الضرورية في الرسوم */
     .css-1kyx738 {{ margin-bottom: -1rem !important; }}
+    iframe {{ 
+        border: 3px solid #FFD700 !important; 
+        border-radius: 12px !important; 
+        box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
+    }}
 </style>
 """, unsafe_allow_html=True)
 
