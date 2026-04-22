@@ -149,7 +149,17 @@ with col_mid:
             HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()], radius=15).add_to(m)
             
         # ارتفاع الخريطة لملء المنتصف دون تسبب في Scroll
-        st_folium(m, height=450, width="100%", key="main_map")
+       st.markdown("""
+<div style="
+    border: 2px solid #FFD700;
+    border-radius: 12px;
+    padding: 5px;
+">
+""", unsafe_allow_html=True)
+
+st_folium(m, height=450, width="100%", key="main_map")
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 with col_right:
     st.markdown("##### ⚠️ Critical Alerts")
