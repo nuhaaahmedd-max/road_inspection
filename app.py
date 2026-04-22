@@ -10,42 +10,42 @@ import random
 from PIL import Image
 import io
 
-# 1. Configuration - جعل السايد بار مفتوحة والصفحة واسعة
+# 1. Configuration
 st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
 
 # 2. Colors
 color_map = {'Clear': '#FFD700', 'Crack': '#FF0000', 'Manhole': '#0070FF', 'Pothole': '#00FF00'}
 gold_color = "#FFD700" 
 
-# 3. CSS Customization - التعديل المطلوب على العنوان والسايد بار والمسافات
+# 3. CSS Customization
 st.markdown(f"""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap');
 
     .block-container {{ 
-        padding-top: 1rem !important; 
+        padding-top: 0.5rem !important; 
         padding-bottom: 0rem !important; 
         max-width: 98% !important;
     }}
     
     .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
     
-    /* تعديل العنوان لضمان ظهوره كاملاً في سطر واحد وتوسطه */
     .main-title {{ 
         color: {gold_color}; 
         font-family: 'Montserrat', sans-serif;
-        font-size: 22px; 
+        font-size: 24px; 
         font-weight: 900; 
         text-align: center; 
         width: 100%;
-        padding: 10px 0px; 
-        margin-top: -15px;
-        margin-bottom: 15px; 
-        line-height: 1.5; 
-        letter-spacing: 1px;
+        padding: 15px 0px; 
+        margin-top: 0px !important;
+        margin-bottom: 10px; 
+        line-height: 1.2; 
+        letter-spacing: 1.5px;
         text-transform: uppercase;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        display: block !important;
+        border-bottom: 2px solid rgba(255, 215, 0, 0.2);
     }}
 
     .card {{ 
@@ -56,6 +56,15 @@ st.markdown(f"""
     .label {{ font-size: 10px; color: {gold_color} !important; text-transform: uppercase; opacity: 0.8; }}
 
     section[data-testid="stSidebar"] {{ background-color: #0B0E14 !important; }}
+    
+    /* إعادة إطار الخريطة الذهبي */
+    iframe {{ 
+        border: 2px solid {gold_color} !important; 
+        border-radius: 12px !important; 
+        box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
+    }}
+
+    header {{visibility: hidden !important;}}
 </style>
 """, unsafe_allow_html=True)
 
@@ -116,7 +125,7 @@ c1.markdown(f"<div class='card'><div class='label'>TOTAL</div><div class='value'
 c2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value'>{stats['Crack']}</div></div>", unsafe_allow_html=True)
 c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{stats['Pothole']}</div></div>", unsafe_allow_html=True)
 c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{stats['Manhole']}</div></div>", unsafe_allow_html=True)
-c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{int(df_plot['Confidence'].mean()) if not df_plot.empty else 0}%</div></div>", unsafe_allow_html=True)
+c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{int(df_plot['Confidence'].mean() * 100) if not df_plot.empty else 0}%</div></div>", unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
 
@@ -128,7 +137,7 @@ with col_left:
     if not df_plot.empty:
         fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map)
         fig1.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=220, showlegend=True, 
-                          legend=dict(orientation="h", y=-0.1), paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
+                          legend=dict(orientation="h", y=-0.1, x=0.5, xanchor="center"), paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
         st.plotly_chart(fig1, use_container_width=True)
     
     st.markdown("##### 📉 Confidence Trend")
@@ -160,10 +169,10 @@ with col_mid:
 
 with col_right:
     st.markdown("##### ⚠️ Critical Alerts")
-    critical = df_plot[df_plot['Confidence'] > 90].head(5)
+    critical = df_plot[df_plot['Confidence'] > 0.90].head(5)
     if not critical.empty:
         for r in critical.itertuples():
-            st.warning(f"**{r.Object}** - {r.Confidence}%")
+            st.warning(f"**{r.Object}** - {int(r.Confidence*100)}%")
     else:
         st.success("No Critical Issues")
 
