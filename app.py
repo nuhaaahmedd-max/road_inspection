@@ -18,14 +18,12 @@ color_map = {'Clear': '#FFD700', 'Crack': '#FF0000', 'Manhole': '#0070FF', 'Poth
 gold_color = "#FFD700" 
 
 # 3. CSS Customization - ضغط المسافات (Padding) لضمان عدم وجود Scroll
-
-# 3. CSS Customization - تم مضاعفة الأقواس الخاصة بـ CSS
 st.markdown(f"""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&display=swap');
-
+    /* تقليل المسافات العلوية والجانبية */
     .block-container {{ 
-        padding-top: 0.5rem !important; 
+        padding-top: 1rem !important; 
+        padding-bottom: 0rem !important; 
         max-width: 98% !important;
     }}
     
@@ -33,12 +31,12 @@ st.markdown(f"""
     
     .main-title {{ 
         color: {gold_color}; font-family: 'Montserrat', sans-serif;
-        font-size: 26px; font-weight: 900; text-align: center; 
-        width: 100%; padding: 15px 0px; margin-bottom: 10px; 
-        text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-        border-bottom: 2px solid rgba(255, 215, 0, 0.2);
+        font-size: 26px; font-weight: 900; text-align: left; 
+        padding: 5px 0px 5px 15px; border-bottom: 1px solid #1F2937; 
+        margin-bottom: 10px; letter-spacing: 1px;
     }}
 
+    /* تصغير الكروت لتناسب سطر واحد */
     .card {{ 
         background: #161B22; padding: 5px; border-radius: 10px; 
         border: 1px solid {gold_color}; text-align: center;
@@ -46,19 +44,17 @@ st.markdown(f"""
     .value {{ font-size: 22px; font-weight: bold; color: {gold_color} !important; }}
     .label {{ font-size: 10px; color: {gold_color} !important; text-transform: uppercase; opacity: 0.8; }}
 
-    section[data-testid="stSidebar"] {{ 
-        background-color: #11141a !important; 
-        border-right: 1px solid {gold_color};
-    }}
-
-    iframe {{ 
-        border: 2px solid {gold_color} !important; 
-        border-radius: 12px !important; 
-    }}
-
-    header {{visibility: hidden !important;}}
+    /* إخفاء الهوامش غير الضرورية في الرسوم */
+    .css-1kyx738 {{ margin-bottom: -1rem !important; }}
+    /* بوردر الخريطة الأصفر/الذهبي */
+    [data-testid="stHtml"] iframe { 
+        border: 3px solid #FFD700 !important; 
+        border-radius: 15px !important;
+        box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.3);
+    }
 </style>
 """, unsafe_allow_html=True)
+
 # ---------------- DATA LOADING (نفس منطقك بدون تغيير) ----------------
 @st.cache_data(ttl=300)
 def load_data():
