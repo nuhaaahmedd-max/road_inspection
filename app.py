@@ -10,7 +10,7 @@ import random
 from PIL import Image
 import io
 
-# 1. Configuration
+# 1. Configuration - التأكد من أن السايد بار تفتح تلقائياً
 st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
 
 # 2. Colors
@@ -55,13 +55,14 @@ st.markdown(f"""
     .value {{ font-size: 22px; font-weight: bold; color: {gold_color} !important; }}
     .label {{ font-size: 10px; color: {gold_color} !important; text-transform: uppercase; opacity: 0.8; }}
 
-    section[data-testid="stSidebar"] {{ background-color: #0B0E14 !important; }}
+    section[data-testid="stSidebar"] {{ 
+        background-color: #0B0E14 !important; 
+        border-right: 1px solid rgba(255, 215, 0, 0.2);
+    }}
     
-    /* إعادة إطار الخريطة الذهبي */
     iframe {{ 
         border: 2px solid {gold_color} !important; 
         border-radius: 12px !important; 
-        box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
     }}
 
     header {{visibility: hidden !important;}}
@@ -125,7 +126,15 @@ c1.markdown(f"<div class='card'><div class='label'>TOTAL</div><div class='value'
 c2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value'>{stats['Crack']}</div></div>", unsafe_allow_html=True)
 c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{stats['Pothole']}</div></div>", unsafe_allow_html=True)
 c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{stats['Manhole']}</div></div>", unsafe_allow_html=True)
-c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{int(df_plot['Confidence'].mean() * 100) if not df_plot.empty else 0}%</div></div>", unsafe_allow_html=True)
+
+# تصحيح عرض النسبة المئوية هنا
+if not df_plot.empty:
+    # إذا كانت القيم بين 0-1 نضرب في 100، إذا كانت أصلاً 0-100 نتركها كما هي
+    avg_conf = df_plot['Confidence'].mean()
+    display_conf = int(avg_conf) if avg_conf > 1 else int(avg_conf * 100)
+else:
+    display_conf = 0
+c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{display_conf}%</div></div>", unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
 
@@ -169,10 +178,12 @@ with col_mid:
 
 with col_right:
     st.markdown("##### ⚠️ Critical Alerts")
-    critical = df_plot[df_plot['Confidence'] > 0.90].head(5)
+    # التأكد من حساب نسبة التنبيهات أيضاً بشكل صحيح
+    critical = df_plot[(df_plot['Confidence'] > 90) | (df_plot['Confidence'] > 0.90)].head(5)
     if not critical.empty:
         for r in critical.itertuples():
-            st.warning(f"**{r.Object}** - {int(r.Confidence*100)}%")
+            conf_val = int(r.Confidence) if r.Confidence > 1 else int(r.Confidence * 100)
+            st.warning(f"**{r.Object}** - {conf_val}%")
     else:
         st.success("No Critical Issues")
 
