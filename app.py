@@ -120,7 +120,7 @@ st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
 
 ---------------- MAIN DASHBOARD LAYOUT ----------------
 
-تقسيم الصفحة لـ 3 أعمدة: يسار (تحليلات)، منتصف (خريطة)، يمين (تنبيهات ورسوم)
+#تقسيم الصفحة لـ 3 أعمدة: يسار (تحليلات)، منتصف (خريطة)، يمين (تنبيهات ورسوم)
 
 col_left, col_mid, col_right = st.columns([1.2, 2.5, 1.2])
 
