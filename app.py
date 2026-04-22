@@ -118,4 +118,87 @@ else:
 st.sidebar.markdown("---")
 if not df_plot.empty:
     csv = df_plot.to_csv(index=False).encode('utf-8')
-    st.
+    st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
+
+# ---------------- HEADER ----------------
+st.markdown('<div class="main-title">Road Inspection Intelligence Dashboard</div>', unsafe_allow_html=True)
+
+# ---------------- KPI ROW ----------------
+c1, c2, c3, c4, c5 = st.columns(5)
+stats = {obj: len(df_plot[df_plot['Object'] == obj]) for obj in ['Crack', 'Pothole', 'Manhole']}
+c1.markdown(f"<div class='card'><div class='label'>TOTAL</div><div class='value'>{len(df_plot)}</div></div>", unsafe_allow_html=True)
+c2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value'>{stats['Crack']}</div></div>", unsafe_allow_html=True)
+c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{stats['Pothole']}</div></div>", unsafe_allow_html=True)
+c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{stats['Manhole']}</div></div>", unsafe_allow_html=True)
+c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{int(df_plot['Confidence'].mean()) if not df_plot.empty else 0}%</div></div>", unsafe_allow_html=True)
+
+st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+
+# ---------------- MAIN CONTENT ----------------
+col_left, col_mid, col_right = st.columns([1.2, 2.5, 1.2])
+
+with col_left:
+    st.markdown("##### 📊 Object Distribution")
+    if not df_plot.empty:
+        fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map)
+        fig1.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=220, showlegend=True, 
+                          legend=dict(orientation="h", y=-0.1, x=0.5, xanchor="center"), 
+                          paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
+        st.plotly_chart(fig1, use_container_width=True)
+    
+    st.markdown("##### 📉 Confidence Trend")
+    if not df_plot.empty:
+        fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15)
+        fig2.update_layout(margin=dict(t=20, b=0, l=0, r=0), height=180, paper_bgcolor='rgba(0,0,0,0)', 
+                          plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
+        st.plotly_chart(fig2, use_container_width=True)
+
+with col_mid:
+    st.markdown("##### 🗺️ Spatial Inspection View")
+    if not df_plot.empty:
+        m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
+        Fullscreen().add_to(m)
+        
+        if view_mode == "Points":
+            for index, row in df_plot.iterrows():
+                img_b64 = get_random_image_by_type(row['Object'])
+                color = color_map.get(row['Object'], "#FFF")
+                
+                if img_b64 == "CLEAR_MODE":
+                    html_content = f'<div style="text-align:center;color:black;"><b>✅ STATUS: CLEAR</b></div>'
+                elif img_b64:
+                    html_content = f'''
+                    <div style="text-align:center; font-family: Montserrat; color:black; width:150px;">
+                        <h6 style="margin:5px; color:{color};">{row['Object']}</h6>
+                        <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:5px;">
+                        <p style="margin:5px; font-size:10px;"><b>Confidence: {row['Confidence']}%</b></p>
+                    </div>'''
+                else:
+                    html_content = f'<div style="color:black;">Loading...</div>'
+
+                folium.CircleMarker(
+                    location=[row['Longitude'], row['Latitude']],
+                    radius=7, color=color, fill=True, fill_opacity=0.8,
+                    popup=folium.Popup(folium.IFrame(html_content, width=170, height=200))
+                ).add_to(m)
+        else:
+            heat_data = [[row['Longitude'], row['Latitude']] for index, row in df_plot.iterrows()]
+            HeatMap(heat_data, radius=15, blur=10).add_to(m)
+            
+        st_folium(m, height=450, width="100%", key="main_map")
+
+with col_right:
+    st.markdown("##### ⚠️ Critical Alerts")
+    critical = df_plot[(df_plot['Object'] != 'Clear') & (df_plot['Confidence'] > 90)].head(5)
+    if not critical.empty:
+        for r in critical.itertuples():
+            st.warning(f"🚨 {r.Object} ({r.Confidence}%)")
+    else:
+        st.success("✅ System Stable")
+
+    st.markdown("##### 📊 Count by Category")
+    if not df_plot.empty:
+        fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map)
+        fig3.update_layout(margin=dict(t=20, b=0, l=0, r=0), height=200, paper_bgcolor='rgba(0,0,0,0)', 
+                          plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
+        st.plotly_chart(fig3, use_container_width=True)
