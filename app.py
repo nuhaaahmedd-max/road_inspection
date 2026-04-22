@@ -10,7 +10,7 @@ import random
 from PIL import Image
 import io
 
-# 1. Configuration - التأكد من أن السايد بار تفتح تلقائياً
+# 1. Configuration - إجبار السايد بار على الظهور
 st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
 
 # 2. Colors
@@ -24,27 +24,16 @@ st.markdown(f"""
 
     .block-container {{ 
         padding-top: 0.5rem !important; 
-        padding-bottom: 0rem !important; 
         max-width: 98% !important;
     }}
     
     .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
     
     .main-title {{ 
-        color: {gold_color}; 
-        font-family: 'Montserrat', sans-serif;
-        font-size: 24px; 
-        font-weight: 900; 
-        text-align: center; 
-        width: 100%;
-        padding: 15px 0px; 
-        margin-top: 0px !important;
-        margin-bottom: 10px; 
-        line-height: 1.2; 
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-        display: block !important;
+        color: {gold_color}; font-family: 'Montserrat', sans-serif;
+        font-size: 24px; font-weight: 900; text-align: center; 
+        width: 100%; padding: 15px 0px; margin-bottom: 10px; 
+        text-transform: uppercase; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
         border-bottom: 2px solid rgba(255, 215, 0, 0.2);
     }}
 
@@ -55,11 +44,12 @@ st.markdown(f"""
     .value {{ font-size: 22px; font-weight: bold; color: {gold_color} !important; }}
     .label {{ font-size: 10px; color: {gold_color} !important; text-transform: uppercase; opacity: 0.8; }}
 
+    /* تحسين ظهور السايد بار */
     section[data-testid="stSidebar"] {{ 
-        background-color: #0B0E14 !important; 
-        border-right: 1px solid rgba(255, 215, 0, 0.2);
+        background-color: #161B22 !important; 
+        min-width: 250px !important;
     }}
-    
+
     iframe {{ 
         border: 2px solid {gold_color} !important; 
         border-radius: 12px !important; 
@@ -104,17 +94,15 @@ def get_random_image_by_type(obj_type):
 
 df = load_data()
 
-# ---------------- SIDEBAR ----------------
-st.sidebar.markdown("## 🛠️ FILTERS")
-view_mode = st.sidebar.radio("MAP MODE", ["Points", "Heatmap"], index=0)
-if not df.empty:
-    selected_types = st.sidebar.multiselect("DEFECT TYPE", options=df["Object"].unique(), default=list(df["Object"].unique()))
-    df_plot = df[df["Object"].isin(selected_types)]
-else: df_plot = df
-
-if not df_plot.empty:
-    csv = df_plot.to_csv(index=False).encode('utf-8')
-    st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
+# ---------------- SIDEBAR (إعادة إظهار الفلاتر) ----------------
+with st.sidebar:
+    st.markdown("### 🛠️ DASHBOARD CONTROL")
+    view_mode = st.radio("Display Mode", ["Points", "Heatmap"])
+    if not df.empty:
+        selected_types = st.multiselect("Defect Categories", options=df["Object"].unique(), default=list(df["Object"].unique()))
+        df_plot = df[df["Object"].isin(selected_types)]
+    else:
+        df_plot = df
 
 # ---------------- HEADER ----------------
 st.markdown('<div class="main-title">Road Inspection Intelligence Dashboard</div>', unsafe_allow_html=True)
@@ -127,68 +115,53 @@ c2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value
 c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{stats['Pothole']}</div></div>", unsafe_allow_html=True)
 c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{stats['Manhole']}</div></div>", unsafe_allow_html=True)
 
-# تصحيح عرض النسبة المئوية هنا
+# حل مشكلة الـ 9%
 if not df_plot.empty:
-    # إذا كانت القيم بين 0-1 نضرب في 100، إذا كانت أصلاً 0-100 نتركها كما هي
-    avg_conf = df_plot['Confidence'].mean()
-    display_conf = int(avg_conf) if avg_conf > 1 else int(avg_conf * 100)
+    avg = df_plot['Confidence'].mean()
+    final_conf = int(avg) if avg > 1 else int(avg * 100)
+    c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{final_conf}%</div></div>", unsafe_allow_html=True)
 else:
-    display_conf = 0
-c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{display_conf}%</div></div>", unsafe_allow_html=True)
+    c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>0%</div></div>", unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
 
-# ---------------- MAIN DASHBOARD LAYOUT ----------------
+# ---------------- MAIN CONTENT ----------------
 col_left, col_mid, col_right = st.columns([1.2, 2.5, 1.2])
 
 with col_left:
-    st.markdown("##### 📊 Object Distribution")
+    st.markdown("##### 📊 Distribution")
     if not df_plot.empty:
         fig1 = px.pie(df_plot, names='Object', hole=0.6, color='Object', color_discrete_map=color_map)
-        fig1.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=220, showlegend=True, 
-                          legend=dict(orientation="h", y=-0.1, x=0.5, xanchor="center"), paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
+        fig1.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=220, showlegend=True, paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color, legend=dict(orientation="h", y=-0.2))
         st.plotly_chart(fig1, use_container_width=True)
     
-    st.markdown("##### 📉 Confidence Trend")
-    fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15)
-    fig2.update_layout(margin=dict(t=20, b=0, l=0, r=0), height=180, paper_bgcolor='rgba(0,0,0,0)', 
-                      plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
+    st.markdown("##### 📉 Trend")
+    fig2 = px.histogram(df_plot, x='Confidence', nbins=15)
+    fig2.update_layout(margin=dict(t=10, b=0, l=0, r=0), height=180, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
     st.plotly_chart(fig2, use_container_width=True)
 
 with col_mid:
-    st.markdown("##### 🗺️ Spatial Inspection View")
+    st.markdown("##### 🗺️ Spatial View")
     if not df_plot.empty:
         m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
-        Fullscreen().add_to(m)
-        
         if view_mode == "Points":
-            for index, row in df_plot.iterrows():
-                img_b64 = get_random_image_by_type(row['Object'])
-                color = color_map.get(row['Object'], "#FFF")
-                html_content = f'<div style="text-align:center; width:150px; color:black;"><b>{row["Object"]}</b><br><img src="data:image/jpeg;base64,{img_b64}" style="width:100%">' if img_b64 and img_b64 != "CLEAR_MODE" else f'<div style="color:black;">{row["Object"]}</div>'
-                folium.CircleMarker(
-                    location=[row['Longitude'], row['Latitude']],
-                    radius=7, color=color, fill=True, fill_opacity=0.8,
-                    popup=folium.Popup(html_content, max_width=160)
-                ).add_to(m)
+            for _, row in df_plot.iterrows():
+                folium.CircleMarker(location=[row['Longitude'], row['Latitude']], radius=7, color=color_map.get(row['Object'], "#FFF"), fill=True).add_to(m)
         else:
-            HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()], radius=15).add_to(m)
-            
+            HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()]).add_to(m)
         st_folium(m, height=450, width="100%", key="main_map")
 
 with col_right:
-    st.markdown("##### ⚠️ Critical Alerts")
-    # التأكد من حساب نسبة التنبيهات أيضاً بشكل صحيح
-    critical = df_plot[(df_plot['Confidence'] > 90) | (df_plot['Confidence'] > 0.90)].head(5)
+    st.markdown("##### ⚠️ Alerts")
+    # التعديل المطلوب: يظهر No Critical Issues إلا لو الثقة تخطت 98% مثلاً أو كانت pothole
+    critical = df_plot[(df_plot['Object'] == 'Pothole') & (df_plot['Confidence'] > 95)].head(3)
     if not critical.empty:
         for r in critical.itertuples():
-            conf_val = int(r.Confidence) if r.Confidence > 1 else int(r.Confidence * 100)
-            st.warning(f"**{r.Object}** - {conf_val}%")
+            st.error(f"🚨 {r.Object}")
     else:
-        st.success("No Critical Issues")
+        st.success("✅ No Critical Issues")
 
-    st.markdown("##### 📊 Count by Category")
+    st.markdown("##### 📊 Category Count")
     fig3 = px.bar(df_plot, x='Object', color='Object', color_discrete_map=color_map)
-    fig3.update_layout(margin=dict(t=20, b=0, l=0, r=0), height=200, paper_bgcolor='rgba(0,0,0,0)', 
-                      plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
+    fig3.update_layout(margin=dict(t=10, b=0, l=0, r=0), height=200, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
     st.plotly_chart(fig3, use_container_width=True)
