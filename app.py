@@ -11,7 +11,7 @@ from PIL import Image
 import io
 
 # 1. Configuration - جعل العرض واسع جداً
-st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="auto")
+st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sidebar_state="expanded")
 
 # 2. Colors
 color_map = {'Clear': '#FFD700', 'Crack': '#FF0000', 'Manhole': '#0070FF', 'Pothole': '#00FF00'}
