@@ -70,37 +70,46 @@ section[data-testid="stSidebar"] label {{
     font-weight: 600;
 }}
 
-/* 1. الحاوية الكبيرة */
+span[data-baseweb="tag"] svg {{
+        fill: {primary_color} !important;
+    }}
+
     div[data-baseweb="select"] > div {{
-        background-color: transparent !important;
-        border: 1px solid {gold_color} !important;
-        border-radius: 15px !important;
-        padding: 5px !important;
+        background-color: {bg_color} !important;
+        border: 1px solid {primary_color} !important;
+        color: {primary_color} !important;
     }}
 
-    /* 2. المربعات الصغيرة (Tags) */
-    div[data-baseweb="tag"] {{
-        background-color: transparent !important;
-        border: 1.5px solid {gold_color} !important;
-        border-radius: 10px !important;
-        padding: 5px 12px !important;
-        margin: 4px !important;
+    [data-testid="stSidebar"] {{
+        background-color: {sidebar_bg} !important;
+        border-right: 2px solid {primary_color};
     }}
 
-    /* 3. النص داخل المربعات */
-    div[data-baseweb="tag"] span {{
-        color: {gold_color} !important;
-        font-size: 14px !important;
-        font-weight: 800 !important;
-        font-family: 'Montserrat', sans-serif;
+    /* الكروت */
+    .card {{
+        background: {bg_color};
+        padding: 15px;
+        border-radius: 12px;
+        border: 1px solid {primary_color};
+        text-align: center;
     }}
 
-    /* 4. علامة الـ X */
-    div[data-baseweb="tag"] svg {{
-        fill: {gold_color} !important;
-        margin-left: 8px !important;
-        width: 12px !important;
-        height: 12px !important;
+    .value {{
+        font-size: 28px;
+        font-weight: bold;
+        color: {primary_color};
+    }}
+
+    .label {{
+        font-size: 14px;
+        color: #9CA3AF;
+        text-transform: uppercase;
+    }}
+
+    .stAlert {{
+        background-color: {bg_color} !important;
+        border: 1px solid {primary_color} !important;
+        color: {primary_color} !important;
     }}
 </style>
 """, unsafe_allow_html=True)
