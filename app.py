@@ -53,6 +53,9 @@ st.markdown(f"""
         border-radius: 12px !important; 
         box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
     }}
+    div[data-testid="stAppViewContainer"] > section > div {{
+        background-color: #0B0E14 !important; /* نفس لون السايد بار الغامق */
+    }}
 /* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {{
     background-color: #0B0E14 !important;
