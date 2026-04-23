@@ -178,6 +178,10 @@ if not df_plot.empty:
 st.markdown("<div style='margin-top:15px'></div>", unsafe_allow_html=True)
 st.markdown('<div class="main-title">Road Inspection Intelligence Dashboard</div>', unsafe_allow_html=True)
 
+# حساب كثافة العيوب (Defect Density)
+road_length_km = 1.0  # تقدير لطول الطريق
+density_value = len(df_plot) / road_length_km if road_length_km > 0 else 0
+
 # ---------------- TOP ROW: KPIs (تم دمجها في سطر واحد رفيع) ----------------
 c1, c2, c3, c4, c5 = st.columns(5)
 stats = {obj: len(df_plot[df_plot['Object'] == obj]) for obj in ['Crack', 'Pothole', 'Manhole']}
@@ -185,7 +189,7 @@ c1.markdown(f"<div class='card'><div class='label'>TOTAL</div><div class='value'
 c2.markdown(f"<div class='card'><div class='label'>CRACKS</div><div class='value'>{stats['Crack']}</div></div>", unsafe_allow_html=True)
 c3.markdown(f"<div class='card'><div class='label'>POTHOLES</div><div class='value'>{stats['Pothole']}</div></div>", unsafe_allow_html=True)
 c4.markdown(f"<div class='card'><div class='label'>MANHOLES</div><div class='value'>{stats['Manhole']}</div></div>", unsafe_allow_html=True)
-c5.markdown(f"<div class='card'><div class='label'>CONFIDENCE</div><div class='value'>{int(df_plot['Confidence'].mean()) if not df_plot.empty else 0}%</div></div>", unsafe_allow_html=True)
+c5.markdown(f"<div class='card'><div class='label'>DEFECT DENSITY</div><div class='value'>{density_value:.1f} <span style='font-size:12px;'>Defect/Km</span></div></div>", unsafe_allow_html=True)
 
 st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
 
