@@ -124,20 +124,23 @@ span[data-baseweb="tag"] {{
     div[role="radiogroup"] div[data-active="false"] > div {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
-    .stSlider [data-baseweb="slider"] {{
-        background-color: transparent;
+      .stSlider [data-baseweb="slider"] > div > div {{
+        background: linear-gradient(to right, #FFD700, #36454F) !important; 
     }}
-    .stSlider [data-testid="stTickBar"] {{
-        display: none;
+    
+    /* تغيير لون الرقم والمقبض للأصفر */
+    .stSlider [data-testid="stThumbValue"] {{
+        color: #FFD700 !important;
     }}
-    /* تغيير لون المقبض (الدايرة) */
+    
     .stSlider [role="slider"] {{
-        background-color: #FFD700;
-        border: 2px solid #FFD700;
-   }}
-   .stSlider [data-baseweb="slider"] > div > div {{
-        /* استخدمنا كود اللون الرمادي المزرق بالظبط */
-        background: linear-gradient(to right, #FFD700, #36454F) !important;
+        background-color: #FFD700 !important;
+        border: 2px solid #FFD700 !important;
+    }}
+
+    /* لجعل المسار غير النشط شفاف أو متناسق مع الخلفية */
+    .stSlider [data-baseweb="slider"] > div {{
+        background-color: rgba(255, 255, 255, 0.05) !important;
     }}
 </style>
 """, unsafe_allow_html=True)
