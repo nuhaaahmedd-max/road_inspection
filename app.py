@@ -102,11 +102,24 @@ section[data-testid="stSidebar"] input[type="radio"] {{
 section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {{
     background: linear-gradient(90deg, #FF4B4B, #FFD700) !important;
 }}
-/* تخصيص الـ Multiselect (المربعات الذهبية) */
-    div[data-baseweb="select"] > div {{
-        background-color: transparent !important;
-        border: 1px solid {gold_color} !important;
-        border-radius: 10px !important;
+section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
+        background-color: transparent !important;  /* إزالة الخلفية الملونة */
+        border: 1px solid {gold_color} !important; /* إضافة إطار ذهبي رقيق */
+        color: {gold_color} !important;            /* لون النص ذهبي */
+        border-radius: 14px !important;            /* تدوير الحواف بدقة */
+        padding: 4px 12px !important;              /* مسافة داخلية (Padding) */
+        margin: 4px 3px !important;               /* مسافة بين العناصر */
+        font-weight: bold !important;
+    }}
+    
+    /* لون النص داخل الـ Tag */
+    section[data-testid="stSidebar"] div[data-baseweb="tag"] span {{
+        color: {gold_color} !important;
+    }}
+
+    /* لون أيقونة الإغلاق (X) في الـ Tag */
+    section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {{
+        fill: {gold_color} !important;
     }}
 </style>
 """, unsafe_allow_html=True)
