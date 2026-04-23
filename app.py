@@ -183,7 +183,7 @@ conf_threshold = st.sidebar.slider(
 df_plot = df_plot[df_plot['Confidence'] >= conf_threshold]
 
 df_plot = df_plot[df_plot["Object"].isin(selected_types)]
-df_plot = df_plot[df_plot["Confidence"] >= min_value]
+df_plot = df_plot[df_plot["Confidence"] >= confidence_min]
 cracks = df_plot[df_plot['Object'] == "Crack"]
 if not df_plot.empty:
     csv = df_plot.to_csv(index=False).encode('utf-8')
