@@ -124,14 +124,19 @@ span[data-baseweb="tag"] {{
     div[role="radiogroup"] div[data-active="false"] > div {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
-    /* الجزء الملوّن (من البداية لحد المؤشر) */
+    .stSlider > div > div > div {{
+    background: #444;  /* اللون اللي بعد الدائرة */
+    }}
+
+/* الجزء اللي قبل الدائرة (المليان) */
 .stSlider > div > div > div > div {{
+    background: #FFD700 !important;  /* اللون اللي قبل الدائرة */
+    }}
+
+/* الدائرة نفسها */
+.stSlider [role="slider"] {{
     background: #FFD700 !important;
-    }} 
-   
-    .stSlider [role="slider"] {{
-        background-color: #FFD700 !important;
-        border: 2px solid #FFD700 !important;
+    border: 2px solid white;
     }}
 
 </style>
