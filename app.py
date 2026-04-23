@@ -213,12 +213,15 @@ with col_left:
                           legend=dict(orientation="h", y=-0.1), paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
         st.plotly_chart(fig1, use_container_width=True)
     df_defects_only = df_plot[df_plot['Object'] != 'Clear']
+    # 1. بنفلتر الداتا عشان نشيل الـ Clear قبل ما نرسم
+    df_defects_only = df_plot[df_plot['Object'] != 'Clear']
+
+    # 2. بنرسم نفس الجراف بأبعاده الأصلية بالظبط
     st.markdown("##### 📉 Confidence Trend")
-    fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15)
+    fig2 = px.histogram(df_defects_only, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15)
     fig2.update_layout(margin=dict(t=20, b=0, l=0, r=0), height=180, paper_bgcolor='rgba(0,0,0,0)', 
                       plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
-
 with col_mid:
     st.markdown("##### 🗺️ Spatial Inspection View")
     if not df_plot.empty:
