@@ -169,9 +169,6 @@ if not df.empty:
     selected_types = st.sidebar.multiselect("DEFECT TYPE", options=df["Object"].unique(), default=list(df["Object"].unique()))
     df_plot = df[df["Object"].isin(selected_types)]
 else: df_plot = df
-# 1. إضافة السلايدر في القائمة الجانبية
-st.sidebar.markdown("---")
-st.sidebar.markdown("---")
 # السلايدر والفلترة (تأكدي إن كلهم على نفس خط البداية)
 confidence_min = st.sidebar.slider("Confidence Threshold", 0.0, 1.0, 0.0, 0.05)
 df_plot = df_plot[df_plot['Confidence'] >= confidence_min]
