@@ -124,36 +124,20 @@ span[data-baseweb="tag"] {{
     div[role="radiogroup"] div[data-active="false"] > div {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
-    .stSlider [data-baseweb="slider"] > div:first-child {{
-        background-color: transparent !important;
-    }}
-    
-    /* 2. تصميم الخط الرفيع جداً (الذهبي) */
-    .stSlider [data-baseweb="slider"] > div > div {{
-        background-color: #FFD700 !important;
-        height: 2px !important;
-    }}
-
-    /* 3. تصميم النقطة الحمراء (Handle) */
-    .stSlider [role="slider"] {{
-        background-color: #FF4B4B !important;
-        border: none !important;
-        height: 14px !important;
-        width: 14px !important;
-        border-radius: 50% !important;
-        top: 50% !important;
-        box-shadow: none !important;
-    }}
-
-    /* 4. إخفاء أي حدود أو ظلال إضافية */
     .stSlider [data-baseweb="slider"] {{
-        border: none !important;
+        background-color: transparent;
     }}
-
-    /* 5. إخفاء الأرقام والقيم الجانبية عشان يفضل "سمبل" */
-    .stSlider [data-testid="stTickBar"], 
-    .stSlider [data-testid="stWidgetLabel"] + div > div {{
-        display: none !important;
+    .stSlider [data-testid="stTickBar"] {{
+        display: none;
+    }}
+    /* تغيير لون المقبض (الدايرة) */
+    .stSlider [role="slider"] {{
+        background-color: #FFD700;
+        border: 2px solid #FFD700;
+    }}
+    /* تغيير لون الجزء النشط من الخط */
+    .stSlider [data-baseweb="slider"] > div > div {{
+        background: linear-gradient(to right, #FFD700, #B8860B);
     }}
 </style>
 """, unsafe_allow_html=True)
