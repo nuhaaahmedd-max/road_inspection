@@ -65,7 +65,7 @@ section[data-testid="stSidebar"] h2 {{
     color: #ebecef;
     font-weight: 800;
     text-align: center !important;
-    margin-top: -20px !important;
+    margin-top: -40px !important;
 }}
 
 /* ===== LABELS ===== */
