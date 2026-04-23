@@ -72,7 +72,7 @@ section[data-testid="stSidebar"] label {{
 
 /* ===== MULTISELECT BOX ===== */
 section[data-testid="stSidebar"] div[data-baseweb="select"] > div {{
-    background-color: #FFD700 !important;
+    background-color: transparent !important;
     border: 1.5x solid #FFD700 !important;
     border-radius: 14px !important;
     padding: 8px !important;
