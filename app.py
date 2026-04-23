@@ -213,7 +213,7 @@ with col_left:
                           legend=dict(orientation="h", y=-0.1), paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
         st.plotly_chart(fig1, use_container_width=True)
     
-     st.markdown("##### 📉 Confidence Trend")
+    st.markdown("##### 📉 Confidence Trend")
     fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15)
     fig2.update_layout(margin=dict(t=20, b=0, l=0, r=0), height=180, paper_bgcolor='rgba(0,0,0,0)', 
                       plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
