@@ -219,20 +219,23 @@ with col_mid:
                 color = color_map.get(row['Object'], "#FFF")
                 lat_val = row['Longitude']
                 long_val = row['Latitude']
+                # العرض الجديد 200px عشان يكون مريح للعين
                 html_content = f"""
                 <div style="text-align:center; width:200px; font-family:sans-serif;">
-                    <b>{row['Object']}</b><br>
-                    <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:5px;">
-                    <div style="margin-top:10px; padding:5px; border-top:1px solid #ccc; font-size:11px;">
-                        <b>Lat (Y):</b> {lat_val:.6f}<br>
-                        <b>Long (X):</b> {long_val:.6f}
+                    <b style="font-size:16px;">{row['Object']}</b><br>
+                    <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:8px; margin-top:5px;">
+                    <div style="margin-top:10px; padding:8px; border-top:1px solid #ccc; background-color:#f9f9f9; border-radius:5px;">
+                        <p style="margin:0; font-size:12px;"><b>Lat (Y):</b> {row['Longitude']:.6f}</p>
+                        <p style="margin:0; font-size:12px;"><b>Long (X):</b> {row['Latitude']:.6f}</p>
                     </div>
                 </div>
                 """
+                
                 folium.CircleMarker(
                     location=[row['Longitude'], row['Latitude']],
                     radius=7, color=color, fill=True, fill_opacity=0.8,
-                    popup=folium.Popup(html_content, max_width=160)
+                    # لازم نكبر الـ max_width هنا كمان لـ 220 مثلاً عشان يستوعب الـ div
+                    popup=folium.Popup(html_content, max_width=220) 
                 ).add_to(m)
         else:
             HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()], radius=15).add_to(m)
