@@ -62,9 +62,10 @@ section[data-testid="stSidebar"] {{
 
 /* ===== TITLE ===== */
 section[data-testid="stSidebar"] h2 {{
-    color: #F5F5F7;
+    color: #ebecef;
     font-weight: 800;
     text-align: center !important;
+    margin-top: -20px !important;
 }}
 
 /* ===== LABELS ===== */
