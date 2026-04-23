@@ -124,46 +124,28 @@ span[data-baseweb="tag"] {{
     div[role="radiogroup"] div[data-active="false"] > div {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
-    .stSlider > div {{
-        margin-top: -15px; /* رفع السلايدر لفوق شوية */
-    }}
     .stSlider [data-baseweb="slider"] {{
         background-color: transparent !important;
-        height: auto;
     }}
     .stSlider [data-testid="stTickBar"] {{
         display: none !important;
     }}
-    
-    /* 2. تصميم الخط الرفيع جداً (الذهبي) */
+    /* الخط الذهبي الرفيع */
     .stSlider [data-baseweb="slider"] > div > div {{
-        background-color: #FFD700 !important; /* اللون الذهبي */
-        height: 2px !important; /* رفيع جداً زي الصورة */
-        border-radius: 1px;
-    }}
-    /* إخفاء الجزء الغير نشط من الخط */
-    .stSlider [data-baseweb="slider"] > div {{
-        background-color: rgba(255, 215, 0, 0.2) !important;
+        background-color: #FFD700 !important;
         height: 2px !important;
     }}
-
-    /* 3. تصميم النقطة (الـ Handle) الحمراء والمدورة */
+    /* النقطة الحمراء (Handle) */
     .stSlider [role="slider"] {{
-        background-color: #FF4B4B !important; /* اللون الأحمر */
+        background-color: #FF4B4B !important;
         border: none !important;
-        height: 14px !important; /* حجم النقطة */
-        width: 14px !important;
-        border-radius: 50% !important; /* مدورة بالكامل */
+        height: 12px !important;
+        width: 12px !important;
+        border-radius: 50% !important;
         top: 50% !important;
-        transform: translate(-50%, -50%) !important;
-        box-shadow: none !important; /* شلنا أي ظل عشان تبان Flat */
     }}
-    /* إخفاء الرقم اللي بيظهر فوق النقطة لما تضغطي عليها */
-    .stSlider [role="slider"] > div {{
-        display: none;
-    }}
-    
-    /* 4. إخفاء القيم المكتوبة في الجناب (0 و 1) عشان يبان بسيط */
+    /* إخفاء الأرقام والقيم الجانبية لتبسيط الشكل */
+    .stSlider [role="slider"] > div, 
     .stSlider [data-testid="stWidgetLabel"] + div > div {{
         display: none !important;
     }}
