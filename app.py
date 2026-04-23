@@ -135,10 +135,6 @@ span[data-baseweb="tag"] {{
         background-color: #FFD700;
         border: 2px solid #FFD700;
     }}
-    .stSlider [data-testid="stTickBar"], 
-    .stSlider [data-testid="stWidgetLabel"] + div > div {{
-        display: none !important;
-    }}
 </style>
 """, unsafe_allow_html=True)
 
