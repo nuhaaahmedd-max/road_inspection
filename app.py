@@ -111,7 +111,7 @@ span[data-baseweb="tag"] {{
     /* 2. تلوين النص (Points & Heatmap) باللون الأصفر */
     div[role="radiogroup"] label p {{
         color: #FACC15 !important;
-        font-weight: 800 !important;
+        font-weight: 400 !important;
     }}
 
     /* 3. تلوين الدوائر غير المختارة (اختياري لو حابة توحدي اللون) */
