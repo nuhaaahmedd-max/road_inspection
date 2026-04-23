@@ -70,53 +70,37 @@ section[data-testid="stSidebar"] label {{
     font-weight: 600;
 }}
 
-/* ===== MULTISELECT BOX ===== */
-section[data-testid="stSidebar"] div[data-baseweb="select"] > div {{
-    background-color: transparent !important;
-    border: 2px solid #FFD700 !important;
-    border-radius: 14px !important;
-    padding: 8px !important;
-}}
-
-/* ===== CHIPS ===== */
-section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
-    background-color: transparent !important;
-    border: 1.5px solid #FFD700 !important;
-    color: #FFD700 !important;
-    border-radius: 10px !important;
-    padding: 4px 10px !important;
-    margin: 3px !important;
-}}
-
-
-
-/* ===== RADIO ===== */
-section[data-testid="stSidebar"] input[type="radio"] {{
-    accent-color: #FFD700;
-}}
-
-/* ===== SLIDER ===== */
-section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {{
-    background: linear-gradient(90deg, #FFD700) !important;
-}}
-section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
-        background-color: transparent !important;  /* إزالة الخلفية الملونة */
-        border: 1px solid #FFD700 !important; /* إضافة إطار ذهبي رقيق */
-        color: #FFD700 !important;            /* لون النص ذهبي */
-        border-radius: 14px !important;            /* تدوير الحواف بدقة */
-        padding: 4px 12px !important;              /* مسافة داخلية (Padding) */
-        margin: 4px 3px !important;               /* مسافة بين العناصر */
-        font-weight: bold !important;
-    }}
-    
-    /* لون النص داخل الـ Tag */
-    section[data-testid="stSidebar"] div[data-baseweb="tag"] span {{
-        color: #FFD700 !important;
+/* 1. الحاوية الكبيرة */
+    div[data-baseweb="select"] > div {{
+        background-color: transparent !important;
+        border: 1px solid {gold_color} !important;
+        border-radius: 15px !important;
+        padding: 5px !important;
     }}
 
-    /* لون أيقونة الإغلاق (X) في الـ Tag */
-    section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {{
-        fill: #FFD700 !important;
+    /* 2. المربعات الصغيرة (Tags) */
+    div[data-baseweb="tag"] {{
+        background-color: transparent !important;
+        border: 1.5px solid {gold_color} !important;
+        border-radius: 10px !important;
+        padding: 5px 12px !important;
+        margin: 4px !important;
+    }}
+
+    /* 3. النص داخل المربعات */
+    div[data-baseweb="tag"] span {{
+        color: {gold_color} !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+        font-family: 'Montserrat', sans-serif;
+    }}
+
+    /* 4. علامة الـ X */
+    div[data-baseweb="tag"] svg {{
+        fill: {gold_color} !important;
+        margin-left: 8px !important;
+        width: 12px !important;
+        height: 12px !important;
     }}
 </style>
 """, unsafe_allow_html=True)
