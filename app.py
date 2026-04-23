@@ -135,9 +135,9 @@ span[data-baseweb="tag"] {{
         background-color: #FFD700;
         border: 2px solid #FFD700;
     }}
-    /* تغيير لون الجزء النشط من الخط */
-    .stSlider [data-baseweb="slider"] > div > div {{
-        background: linear-gradient(to right, #FFD700, #B8860B);
+    .stSlider [data-testid="stTickBar"], 
+    .stSlider [data-testid="stWidgetLabel"] + div > div {{
+        display: none !important;
     }}
 </style>
 """, unsafe_allow_html=True)
