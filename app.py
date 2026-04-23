@@ -135,6 +135,10 @@ span[data-baseweb="tag"] {{
         background-color: #FFD700;
         border: 2px solid #FFD700;
    }}
+   .stSlider [data-baseweb="slider"] > div > div {{
+        /* استخدمنا كود اللون الرمادي المزرق بالظبط */
+        background: linear-gradient(to right, #FFD700, #36454F) !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
