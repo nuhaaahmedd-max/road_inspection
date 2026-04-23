@@ -88,10 +88,7 @@ section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
     margin: 3px !important;
 }}
 
-/* ===== X ICON ===== */
-section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {{
-    fill: #FFD700 !important;
-}}
+
 
 /* ===== RADIO ===== */
 section[data-testid="stSidebar"] input[type="radio"] {{
