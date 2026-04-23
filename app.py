@@ -60,7 +60,7 @@ section[data-testid="stSidebar"] {{
 
 /* ===== TITLE ===== */
 section[data-testid="stSidebar"] h2 {{
-    color: #FFD700;
+    color: #FFFFF0;
     font-weight: 800;
 }}
 
