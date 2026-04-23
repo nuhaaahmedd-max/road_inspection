@@ -99,6 +99,25 @@ span[data-baseweb="tag"] {{
     span[data-baseweb="tag"]:hover {{
         background-color: rgba(250, 204, 21, 0.1) !important; /* خلفية ذهبية خفيفة جداً عند اللمس */
     }}
+    /* 1. تلوين الدائرة اللي تم اختيارها (الـ Active Radio Button) */
+    div[role="radiogroup"] div[data-active="true"] > div {{
+        border-color: #FACC15 !important;
+    }}
+
+    div[role="radiogroup"] div[data-active="true"] > div::after {{
+        background-color: #FACC15 !important;
+    }}
+
+    /* 2. تلوين النص (Points & Heatmap) باللون الأصفر */
+    div[role="radiogroup"] label p {{
+        color: #FACC15 !important;
+        font-weight: bold !important;
+    }}
+
+    /* 3. تلوين الدوائر غير المختارة (اختياري لو حابة توحدي اللون) */
+    div[role="radiogroup"] div[data-active="false"] > div {{
+        border-color: rgba(250, 204, 21, 0.4) !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
