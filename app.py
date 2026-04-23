@@ -143,7 +143,26 @@ span[data-baseweb="tag"] {{
     background: #FFD700 !important;
     border: none;
 }}
+st.markdown("""
+<style>
 
+/* البوكس نفسه نخليه شفاف */
+.stSlider [data-baseweb="tooltip"] {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+}
+
+/* السهم الصغير نخفيه */
+.stSlider [data-baseweb="tooltip"]::after {
+    display: none !important;
+}
+
+/* الرقم نفسه */
+.stSlider [data-baseweb="tooltip"] span {
+    color: #FFD700 !important;  /* اللون اللي انتي عايزاه */
+    font-weight: bold;
+    font-size: 16px;
 </style>
 """, unsafe_allow_html=True)
 
