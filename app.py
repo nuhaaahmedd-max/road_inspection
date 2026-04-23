@@ -125,19 +125,24 @@ span[data-baseweb="tag"] {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
     .stSlider > div > div > div {{
-    background: #444;  /* اللون اللي بعد الدائرة */
-    }}
+    background: #444444 !important;
+}}
 
-/* الجزء اللي قبل الدائرة (المليان) */
+/* الجزء قبل الدايرة */
 .stSlider > div > div > div > div {{
-    background: #FFD700 !important;  /* اللون اللي قبل الدائرة */
-    }}
+    background: #FFD700 !important;
+}}
 
-/* الدائرة نفسها */
+/* نشيل أي gradient */
+.stSlider * {{
+    background-image: none !important;
+}}
+
+/* الدايرة */
 .stSlider [role="slider"] {{
     background: #FFD700 !important;
-    border: 2px solid white;
-    }}
+    border: none;
+}}
 
 </style>
 """, unsafe_allow_html=True)
