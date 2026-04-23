@@ -51,7 +51,29 @@ st.markdown(f"""
         border-radius: 12px !important; 
         box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
     }}
-  /* ===== MULTISELECT BOX (الإطار الكبير) ===== */
+st.markdown("""
+<style>
+
+/* ===== SIDEBAR ===== */
+section[data-testid="stSidebar"] {
+    background-color: #0B0E14 !important;
+    border-right: 2px solid #FFD700;
+    padding: 10px;
+}
+
+/* ===== TITLE ===== */
+section[data-testid="stSidebar"] h2 {
+    color: #FFD700;
+    font-weight: 800;
+}
+
+/* ===== LABELS ===== */
+section[data-testid="stSidebar"] label {
+    color: #FFD700 !important;
+    font-weight: 600;
+}
+
+/* ===== MULTISELECT BOX ===== */
 section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
     background-color: #0B0E14 !important;
     border: 2px solid #FFD700 !important;
@@ -59,41 +81,22 @@ section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
     padding: 8px !important;
 }
 
-/* ===== CHIPS (زي Crack ×) ===== */
+/* ===== CHIPS ===== */
 section[data-testid="stSidebar"] div[data-baseweb="tag"] {
     background-color: transparent !important;
     border: 1.5px solid #FFD700 !important;
     color: #FFD700 !important;
     border-radius: 10px !important;
     padding: 4px 10px !important;
-    font-weight: 600 !important;
     margin: 3px !important;
 }
 
-/* علامة × */
+/* ===== X ICON ===== */
 section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {
     fill: #FFD700 !important;
 }
 
-/* ===== DROPDOWN ARROW ===== */
-section[data-testid="stSidebar"] svg {
-    fill: #FFD700 !important;
-}
-
-/* ===== LABELS ===== */
-section[data-testid="stSidebar"] label {
-    color: #FFD700 !important;
-    font-size: 13px !important;
-    font-weight: 700 !important;
-    letter-spacing: 1px;
-}
-
-/* ===== RADIO BUTTONS ===== */
-section[data-testid="stSidebar"] div[role="radiogroup"] label {
-    font-size: 14px;
-}
-
-/* الدائرة */
+/* ===== RADIO ===== */
 section[data-testid="stSidebar"] input[type="radio"] {
     accent-color: #FF4B4B;
 }
@@ -103,10 +106,8 @@ section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {
     background: linear-gradient(90deg, #FF4B4B, #FFD700) !important;
 }
 
-/* ===== إزالة الظل الافتراضي ===== */
-section[data-testid="stSidebar"] div[data-baseweb="select"] {
-    box-shadow: none !important;
-}
+</style>
+""", unsafe_allow_html=True)
 </style>
 """, unsafe_allow_html=True)
 
