@@ -124,9 +124,6 @@ span[data-baseweb="tag"] {{
     div[role="radiogroup"] div[data-active="false"] > div {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
-      .stSlider > div > div {{
-        background: #ddd; !important; 
-    }}
     /* الجزء الملوّن (من البداية لحد المؤشر) */
 .stSlider > div > div > div > div {{
     background: #FFD700 !important;
