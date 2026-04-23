@@ -135,6 +135,15 @@ span[data-baseweb="tag"] {{
         background-color: #FFD700;
         border: 2px solid #FFD700;
     }}
+    /* 3. تغيير لون الخط النشط (اللي بيمشي ورا الدايرة) للأصفر */
+    .stSlider [data-baseweb="slider"] > div > div {{
+        background-color: #FFD700 !important;
+    }}
+
+    /* 4. تغيير لون الرقم اللي بيظهر فوق (0.45) للأصفر */
+    .stSlider div [data-testid="stThumbValue"] {{
+        color: #FFD700 !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
