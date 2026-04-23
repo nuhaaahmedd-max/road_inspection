@@ -178,7 +178,7 @@ df_plot = df_plot[df_plot['Confidence'] >= confidence_min]
 
 # السطر ده كان فيه مسافة زيادة، كدا بقى صح:
 csv = df_plot.to_csv(index=False).encode('utf-8')
-    st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
+st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
 
 # ---------------- HEADER ----------------
 st.markdown("<div style='margin-top:15px'></div>", unsafe_allow_html=True)
