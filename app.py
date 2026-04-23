@@ -146,25 +146,26 @@ def load_data():
         return df
     except: return pd.DataFrame()
 
-# احذفي سطر الـ cache من هنا
-def get_random_image_by_type(obj_type):
+# هنخلي الكاش يعتمد على الـ seed عشان يثبت صورة لكل نقطة وميتقلش الجهاز
+@st.cache_data(show_spinner=False)
+def get_random_image_by_type(obj_type, seed): # ضفنا كلمة seed هنا
     if obj_type == 'Clear': return "CLEAR_MODE"
     try:
         base_path = "assets"
         target_folder = str(obj_type).strip()
         full_path = os.path.join(base_path, target_folder)
-        if not os.path.exists(full_path): full_path = os.path.join(base_path, target_folder.lower())
         if os.path.exists(full_path):
             images = [f for f in os.listdir(full_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
             if images:
-                # هنا الاختيار العشوائي هيشتغل فعلياً في كل مرة
+                # الـ seed بيخلي العشوائية "ثابتة" لكل نقطة فمبيحملش من جديد
+                random.seed(seed) 
                 selected = random.choice(images)
                 img_path = os.path.join(full_path, selected)
                 with Image.open(img_path) as img:
                     img = img.convert('RGB')
-                    img.thumbnail((250, 250))
+                    img.thumbnail((200, 200)) # صغرنا الحجم شوية عشان الخفة
                     buffered = io.BytesIO()
-                    img.save(buffered, format="JPEG", quality=80)
+                    img.save(buffered, format="JPEG", quality=60) # قللنا الجودة شوية للسرعة
                     return base64.b64encode(buffered.getvalue()).decode()
     except: return None
     return None
