@@ -104,8 +104,8 @@ section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {{
 }}
 section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
         background-color: transparent !important;  /* إزالة الخلفية الملونة */
-        border: 1px solid {gold_color} !important; /* إضافة إطار ذهبي رقيق */
-        color: {gold_color} !important;            /* لون النص ذهبي */
+        border: 1px solid #FFD700 !important; /* إضافة إطار ذهبي رقيق */
+        color: #FFD700 !important;            /* لون النص ذهبي */
         border-radius: 14px !important;            /* تدوير الحواف بدقة */
         padding: 4px 12px !important;              /* مسافة داخلية (Padding) */
         margin: 4px 3px !important;               /* مسافة بين العناصر */
@@ -114,12 +114,12 @@ section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
     
     /* لون النص داخل الـ Tag */
     section[data-testid="stSidebar"] div[data-baseweb="tag"] span {{
-        color: {gold_color} !important;
+        color: #FFD700 !important;
     }}
 
     /* لون أيقونة الإغلاق (X) في الـ Tag */
     section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {{
-        fill: {gold_color} !important;
+        fill: #FFD700 !important;
     }}
 </style>
 """, unsafe_allow_html=True)
