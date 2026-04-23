@@ -213,28 +213,11 @@ with col_left:
                           legend=dict(orientation="h", y=-0.1), paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
         st.plotly_chart(fig1, use_container_width=True)
     
-    st.markdown("##### 📉 Defect Confidence Analysis")
-# فلترة الداتا من غير الـ Clear
-df_defects_only = df_plot[df_plot['Object'] != 'Clear']
-
-if not df_defects_only.empty:
-    # ظبطنا الـ nbins والـ height عشان يرجع زي الصورة الأولى
-    fig2 = px.histogram(df_defects_only, x='Confidence', color='Object', 
-                         color_discrete_map=color_map, nbins=20)
-    
-    fig2.update_layout(
-        margin=dict(t=10, b=10, l=0, r=0), # تقليل الهوامش جداً
-        height=160, # ده الطول اللي كان مخليه ملموم وشكله شيك
-        paper_bgcolor='rgba(0,0,0,0)', 
-        plot_bgcolor='rgba(0,0,0,0)', 
-        font_color=gold_color, 
-        showlegend=False,
-        xaxis=dict(showgrid=False, title="Confidence Score"),
-        yaxis=dict(showgrid=False, title="Count")
-    )
+     st.markdown("##### 📉 Confidence Trend")
+    fig2 = px.histogram(df_plot, x='Confidence', color='Object', color_discrete_map=color_map, nbins=15)
+    fig2.update_layout(margin=dict(t=20, b=0, l=0, r=0), height=180, paper_bgcolor='rgba(0,0,0,0)', 
+                      plot_bgcolor='rgba(0,0,0,0)', font_color=gold_color, showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
-else:
-    st.info("No defects to analyze.")
 
 with col_mid:
     st.markdown("##### 🗺️ Spatial Inspection View")
