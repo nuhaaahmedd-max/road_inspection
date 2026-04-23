@@ -179,7 +179,7 @@ conf_threshold = st.sidebar.slider(
     step=0.05
 )
 
-  df_plot = df_plot[df_plot['Confidence'] >= confidence_min]
+ df_plot = df_plot[df_plot['Confidence'] >= confidence_min]
     csv = df_plot.to_csv(index=False).encode('utf-8')
     st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
 
