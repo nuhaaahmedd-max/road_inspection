@@ -92,12 +92,12 @@ section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
 
 /* ===== RADIO ===== */
 section[data-testid="stSidebar"] input[type="radio"] {{
-    accent-color: #FF4B4B;
+    accent-color: #FFD700;
 }}
 
 /* ===== SLIDER ===== */
 section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {{
-    background: linear-gradient(90deg, #FF4B4B, #FFD700) !important;
+    background: linear-gradient(90deg, #FFD700) !important;
 }}
 section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
         background-color: transparent !important;  /* إزالة الخلفية الملونة */
