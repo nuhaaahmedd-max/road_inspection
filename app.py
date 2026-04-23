@@ -124,8 +124,6 @@ span[data-baseweb="tag"] {{
     div[role="radiogroup"] div[data-active="false"] > div {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
-    st.markdown(f"""
-    <style>
     .stSlider [data-baseweb="slider"] {{
         background-color: transparent;
     }}
@@ -139,8 +137,6 @@ span[data-baseweb="tag"] {{
     .stSlider [data-baseweb="slider"] > div > div {{
         background: linear-gradient(to right, #FFD700, #B8860B);
     }}
-    </style>
-    """, unsafe_allow_html=True)
 </style>
 """, unsafe_allow_html=True)
 
