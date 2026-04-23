@@ -51,9 +51,6 @@ st.markdown(f"""
         border-radius: 12px !important; 
         box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
     }}
-st.markdown("""
-<style>
-
 /* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {
     background-color: #0B0E14 !important;
@@ -105,9 +102,6 @@ section[data-testid="stSidebar"] input[type="radio"] {
 section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {
     background: linear-gradient(90deg, #FF4B4B, #FFD700) !important;
 }
-
-</style>
-""", unsafe_allow_html=True)
 </style>
 """, unsafe_allow_html=True)
 
