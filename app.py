@@ -138,12 +138,6 @@ span[data-baseweb="tag"] {{
     background-image: none !important;
 }}
 
-/* الدايرة */
-.stSlider [role="slider"] {{
-    background: #FFD700 !important;
-    border: none;
-}}
-
 /* البوكس نفسه نخليه شفاف */
 .stSlider [data-baseweb="tooltip"] {{
     background: transparent !important;
