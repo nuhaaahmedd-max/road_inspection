@@ -179,13 +179,7 @@ conf_threshold = st.sidebar.slider(
     step=0.05
 )
 
-# 2. تطبيق الفلترة (دي أهم خطوة للخريطة والجرافات)
-df_plot = df_plot[df_plot['Confidence'] >= conf_threshold]
-
-df_plot = df_plot[df_plot["Object"].isin(selected_types)]
-df_plot = df_plot[df_plot["Confidence"] >= confidence_min]
-cracks = df_plot[df_plot['Object'] == "Crack"]
-if not df_plot.empty:
+  df_plot = df_plot[df_plot['Confidence'] >= confidence_min]
     csv = df_plot.to_csv(index=False).encode('utf-8')
     st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
 
