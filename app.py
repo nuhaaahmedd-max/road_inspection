@@ -71,6 +71,12 @@ section[data-testid="stSidebar"] label {{
     color: #FFD700 !important;
     font-weight: 600;
 }}
+/* المربع الكبير اللي شايل كل الاختيارات */
+    div[data-baseweb="select"] > div:first-child {{
+        border: 1px solid #FACC15 !important; /* لون البوردر الذهبي */
+        border-radius: 8px !important;        /* حواف دائرية للمربع الكبير */
+        background-color: transparent !important;
+    }}
 span[data-baseweb="tag"] {{
         background-color: transparent !important; /* إلغاء الخلفية الحمراء */
         border: 1.5px solid #FACC15 !important;    /* رسم الإطار الذهبي */
