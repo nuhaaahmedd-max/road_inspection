@@ -169,7 +169,18 @@ if not df.empty:
     selected_types = st.sidebar.multiselect("DEFECT TYPE", options=df["Object"].unique(), default=list(df["Object"].unique()))
     df_plot = df[df["Object"].isin(selected_types)]
 else: df_plot = df
-confidence_min = st.sidebar.slider("MIN CONFIDENCE %:", 0, 100, 0)
+# 1. إضافة السلايدر في القائمة الجانبية
+st.sidebar.markdown("---")
+conf_threshold = st.sidebar.slider(
+    "Confidence Threshold", 
+    min_value=0.0, 
+    max_value=1.0, 
+    value=0.30, 
+    step=0.05
+)
+
+# 2. تطبيق الفلترة (دي أهم خطوة للخريطة والجرافات)
+df_plot = df_plot[df_plot['Confidence'] >= conf_threshold]
 
 df_plot = df_plot[df_plot["Object"].isin(selected_types)]
 df_plot = df_plot[df_plot["Confidence"] >= confidence_min]
