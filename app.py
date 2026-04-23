@@ -16,7 +16,9 @@ st.set_page_config(layout="wide", page_title="Road Inspection AI", initial_sideb
 # 2. Colors
 color_map = {'Clear': '#FFD700', 'Crack': '#FF0000', 'Manhole': '#0070FF', 'Pothole': '#00FF00'}
 gold_color = "#FFD700" 
-
+primary_color = "#FACC15"
+bg_color = "#161B22"
+sidebar_bg = "#05070A"
 # 3. CSS Customization - ضغط المسافات (Padding) لضمان عدم وجود Scroll
 st.markdown(f"""
 <style>
