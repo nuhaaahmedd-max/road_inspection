@@ -130,7 +130,7 @@ span[data-baseweb="tag"] {{
 
 /* الجزء قبل الدايرة */
 .stSlider > div > div > div > div {{
-    background: #FFD700 !important;
+   background: linear-gradient(to right, #FFD700, #36454F) !important; 
 }}
 </style>
 """, unsafe_allow_html=True)
