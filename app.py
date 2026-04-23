@@ -257,7 +257,7 @@ with col_mid:
                     padding-right:5px;
                 ">
                     <b style="font-size:16px; color:#333;">{row['Object']}</b><br>
-                    <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:8px; margin-top:5px;">
+                    <img src="{random_image}0" style="width:100%; border-radius:8px; margin-top:5px;">
                     <div style="
                         margin-top:10px; 
                         padding:8px; 
