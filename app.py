@@ -171,14 +171,18 @@ if not df.empty:
 else: df_plot = df
 # 1. إضافة السلايدر في القائمة الجانبية
 st.sidebar.markdown("---")
-conf_threshold = st.sidebar.slider(
+st.sidebar.markdown("---")
+# سمينا المتغير هنا confidence_min
+confidence_min = st.sidebar.slider(
     "Confidence Threshold", 
     min_value=0.0, 
     max_value=1.0, 
     value=0.30, 
     step=0.05
 )
- df_plot = df_plot[df_plot['Confidence'] >= confidence_min]
+
+# استخدمنا نفس الاسم هنا عشان يشتغل صح
+df_plot = df_plot[df_plot['Confidence'] >= confidence_min]
     csv = df_plot.to_csv(index=False).encode('utf-8')
     st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
 
