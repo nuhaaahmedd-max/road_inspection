@@ -242,42 +242,25 @@ with col_mid:
         if view_mode == "Points":
             for index, row in df_plot.iterrows():
                 random_image = random.choice(st.session_state.all_images)
-                color = color_map.get(row['Object'], "#FFF")
-                lat_val = row['Longitude']
-                long_val = row['Latitude']
-              # إضافة Scroll ومنع خروج المحتوى عن البرواز
-                html_content = f"""
-                <div style="
-                    text-align:center; 
-                    width:220px; 
-                    max-height:300px; 
-                    overflow-y:auto; 
-                    overflow-x:hidden; 
-                    font-family:sans-serif;
-                    padding-right:5px;
-                ">
-                    <b style="font-size:16px; color:#333;">{row['Object']}</b><br>
-                    <img src="{random_image}0" style="width:100%; border-radius:8px; margin-top:5px;">
-                    <div style="
-                        margin-top:10px; 
-                        padding:8px; 
-                        border-top:1px solid #ccc; 
-                        background-color:#f9f9f9; 
-                        border-radius:5px;
-                        font-size:12px;
-                    ">
-                        <p style="margin:0;"><b>Lat (Y):</b> {row['Longitude']:.6f}</p>
-                        <p style="margin:0;"><b>Long (X):</b> {row['Latitude']:.6f}</p>
-                    </div>
-                </div>
-                """
-                
-                folium.CircleMarker(
-                    location=[row['Longitude'], row['Latitude']],
-                    radius=7, color=color, fill=True, fill_opacity=0.8,
-                    # تحديد العرض والارتفاع الأقصى للفقاعة نفسها
-                    popup=folium.Popup(html_content, max_width=250) 
-                ).add_to(m)
+    
+    # 2. كود الـ HTML اللي بيعرض الصورة (تأكدي إنه بيستخدم random_image)
+    html = f"""
+        <div style="font-family: Arial; color: white; background-color: #1a1a1a; padding: 10px; border-radius: 10px; width: 250px;">
+            <img src="{random_image}" width="100%" style="border-radius: 5px; border: 1px solid #FFD700;">
+            <p style="margin-top:10px;"><b>Type:</b> {row['Object']}</p>
+            <p><b>Confidence:</b> {row['Confidence']:.2f}</p>
+        </div>
+    """
+    
+    # 3. سطر إضافة النقطة للخريطة (تأكدي إنه بيستخدم الـ html اللي فوق)
+    folium.CircleMarker(
+        location=[row['Latitude'], row['Longitude']],
+        radius=7,
+        popup=folium.Popup(html, max_width=300),
+        color=color_map.get(row['Object'], '#FFD700'),
+        fill=True,
+        fill_opacity=0.8
+    ).add_to(m)
         else:
             HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()], radius=15).add_to(m)
             
