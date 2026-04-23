@@ -51,7 +51,62 @@ st.markdown(f"""
         border-radius: 12px !important; 
         box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
     }}
-  
+  /* ===== MULTISELECT BOX (الإطار الكبير) ===== */
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+    background-color: #0B0E14 !important;
+    border: 2px solid #FFD700 !important;
+    border-radius: 14px !important;
+    padding: 8px !important;
+}
+
+/* ===== CHIPS (زي Crack ×) ===== */
+section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+    background-color: transparent !important;
+    border: 1.5px solid #FFD700 !important;
+    color: #FFD700 !important;
+    border-radius: 10px !important;
+    padding: 4px 10px !important;
+    font-weight: 600 !important;
+    margin: 3px !important;
+}
+
+/* علامة × */
+section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {
+    fill: #FFD700 !important;
+}
+
+/* ===== DROPDOWN ARROW ===== */
+section[data-testid="stSidebar"] svg {
+    fill: #FFD700 !important;
+}
+
+/* ===== LABELS ===== */
+section[data-testid="stSidebar"] label {
+    color: #FFD700 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px;
+}
+
+/* ===== RADIO BUTTONS ===== */
+section[data-testid="stSidebar"] div[role="radiogroup"] label {
+    font-size: 14px;
+}
+
+/* الدائرة */
+section[data-testid="stSidebar"] input[type="radio"] {
+    accent-color: #FF4B4B;
+}
+
+/* ===== SLIDER ===== */
+section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {
+    background: linear-gradient(90deg, #FF4B4B, #FFD700) !important;
+}
+
+/* ===== إزالة الظل الافتراضي ===== */
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    box-shadow: none !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
