@@ -213,7 +213,7 @@ with col_left:
                           legend=dict(orientation="h", y=-0.1), paper_bgcolor='rgba(0,0,0,0)', font_color=gold_color)
         st.plotly_chart(fig1, use_container_width=True)
     
-   st.markdown("##### 📉 Defect Confidence Analysis")
+    st.markdown("##### 📉 Defect Confidence Analysis")
 # فلترة الداتا من غير الـ Clear
 df_defects_only = df_plot[df_plot['Object'] != 'Clear']
 
