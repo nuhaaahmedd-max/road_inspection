@@ -51,6 +51,53 @@ st.markdown(f"""
         border-radius: 12px !important; 
         box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
     }}
+    section[data-testid="stSidebar"] {{
+    background-color: #0B0E14 !important;
+    border-right: 2px solid {gold_color};
+    padding: 10px;
+}}
+
+/* عنوان FILTERS */
+section[data-testid="stSidebar"] h2 {{
+    color: {gold_color};
+    font-weight: 800;
+    letter-spacing: 1px;
+}}
+
+/* Labels */
+section[data-testid="stSidebar"] label {{
+    color: {gold_color} !important;
+    font-weight: 600;
+}}
+
+/* Radio */
+section[data-testid="stSidebar"] div[role="radiogroup"] > label {{
+    color: {gold_color} !important;
+}}
+
+/* Multiselect box */
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div {{
+    background-color: #161B22 !important;
+    border: 1px solid {gold_color} !important;
+    border-radius: 10px !important;
+}}
+
+/* Chips */
+section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
+    background-color: transparent !important;
+    border: 1px solid {gold_color} !important;
+    color: {gold_color} !important;
+    border-radius: 8px !important;
+}}
+
+/* Slider */
+section[data-testid="stSidebar"] div[data-testid="stSlider"] span {{
+    color: {gold_color} !important;
+}}
+
+section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {{
+    background: {gold_color} !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
