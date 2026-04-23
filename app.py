@@ -102,6 +102,12 @@ section[data-testid="stSidebar"] input[type="radio"] {{
 section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {{
     background: linear-gradient(90deg, #FF4B4B, #FFD700) !important;
 }}
+/* تخصيص الـ Multiselect (المربعات الذهبية) */
+    div[data-baseweb="select"] > div {{
+        background-color: transparent !important;
+        border: 1px solid {gold_color} !important;
+        border-radius: 10px !important;
+    }}
 </style>
 """, unsafe_allow_html=True)
 
