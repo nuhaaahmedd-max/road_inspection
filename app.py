@@ -217,7 +217,18 @@ with col_mid:
             for index, row in df_plot.iterrows():
                 img_b64 = get_random_image_by_type(row['Object'])
                 color = color_map.get(row['Object'], "#FFF")
-               html_content = f'<div style="text-align:center; width:150px;"><b>{row["Object"]}</b><br><img src="data:image/jpeg;base64,{img_b64}" style="width:100%"><div style="margin-top:10px; padding:5px; border-top:1px solid #ccc; font-family:monospace;"><p style="margin:0; font-size:11px;"><b>Lat (Y):</b> {row["Longitude"]:.6f}</p><p style="margin:0; font-size:11px;"><b>Long (X):</b> {row["Latitude"]:.6f}</p></div></div>' if img_b64 else "Loading..."
+                lat_val = row['Longitude']
+                long_val = row['Latitude']
+                html_content = f"""
+                <div style="text-align:center; width:150px; font-family:sans-serif;">
+                    <b>{row['Object']}</b><br>
+                    <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:5px;">
+                    <div style="margin-top:10px; padding:5px; border-top:1px solid #ccc; font-size:11px;">
+                        <b>Lat (Y):</b> {lat_val:.6f}<br>
+                        <b>Long (X):</b> {long_val:.6f}
+                    </div>
+                </div>
+                """
                 folium.CircleMarker(
                     location=[row['Longitude'], row['Latitude']],
                     radius=7, color=color, fill=True, fill_opacity=0.8,
