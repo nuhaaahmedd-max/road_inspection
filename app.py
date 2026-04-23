@@ -73,7 +73,7 @@ section[data-testid="stSidebar"] label {{
 }}
 span[data-baseweb="tag"] {{
         background-color: transparent !important; /* إلغاء الخلفية الحمراء */
-        border: 1px solid #FACC15 !important;    /* رسم الإطار الذهبي */
+        border: 1.5px solid #FACC15 !important;    /* رسم الإطار الذهبي */
         border-radius: 5px !important;           /* جعل الحواف مربعة قليلاً مثل صورتك */
         padding: 2px 8px !important;
     }}
