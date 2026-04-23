@@ -52,56 +52,56 @@ st.markdown(f"""
         box-shadow: 0px 0px 10px rgba(255, 215, 0, 0.3);
     }}
 /* ===== SIDEBAR ===== */
-section[data-testid="stSidebar"] {
+section[data-testid="stSidebar"] {{
     background-color: #0B0E14 !important;
     border-right: 2px solid #FFD700;
     padding: 10px;
-}
+}}
 
 /* ===== TITLE ===== */
-section[data-testid="stSidebar"] h2 {
+section[data-testid="stSidebar"] h2 {{
     color: #FFD700;
     font-weight: 800;
-}
+}}
 
 /* ===== LABELS ===== */
-section[data-testid="stSidebar"] label {
+section[data-testid="stSidebar"] label {{
     color: #FFD700 !important;
     font-weight: 600;
-}
+}}
 
 /* ===== MULTISELECT BOX ===== */
-section[data-testid="stSidebar"] div[data-baseweb="select"] > div {
+section[data-testid="stSidebar"] div[data-baseweb="select"] > div {{
     background-color: #0B0E14 !important;
     border: 2px solid #FFD700 !important;
     border-radius: 14px !important;
     padding: 8px !important;
-}
+}}
 
 /* ===== CHIPS ===== */
-section[data-testid="stSidebar"] div[data-baseweb="tag"] {
+section[data-testid="stSidebar"] div[data-baseweb="tag"] {{
     background-color: transparent !important;
     border: 1.5px solid #FFD700 !important;
     color: #FFD700 !important;
     border-radius: 10px !important;
     padding: 4px 10px !important;
     margin: 3px !important;
-}
+}}
 
 /* ===== X ICON ===== */
-section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {
+section[data-testid="stSidebar"] div[data-baseweb="tag"] svg {{
     fill: #FFD700 !important;
-}
+}}
 
 /* ===== RADIO ===== */
-section[data-testid="stSidebar"] input[type="radio"] {
+section[data-testid="stSidebar"] input[type="radio"] {{
     accent-color: #FF4B4B;
-}
+}}
 
 /* ===== SLIDER ===== */
-section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {
+section[data-testid="stSidebar"] div[data-testid="stSlider"] .st-bd {{
     background: linear-gradient(90deg, #FF4B4B, #FFD700) !important;
-}
+}}
 </style>
 """, unsafe_allow_html=True)
 
