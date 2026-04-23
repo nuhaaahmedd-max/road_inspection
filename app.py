@@ -134,20 +134,7 @@ span[data-baseweb="tag"] {{
     .stSlider [role="slider"] {{
         background-color: #FFD700;
         border: 2px solid #FFD700;
-    }} /* 3. الخط النشط: تحويل اللون البينك للأصفر الذهبي */
-    .stSlider [data-baseweb="slider"] > div > div {{
-        background-color: #FFD700 !important;
-    }}
-
-    /* 4. الرقم (0.45): تحويل اللون البينك للأصفر الذهبي */
-    .stSlider [data-testid="stThumbValue"] {{
-        color: #FFD700 !important;
-    }}
-
-    /* 5. الخط غير النشط: خليه رمادي غامق جداً عشان الأصفر يبان فوقه */
-    .stSlider [data-baseweb="slider"] > div {{
-        background-color: rgba(255, 255, 255, 0.2) !important;
-    }}
+   }}
 </style>
 """, unsafe_allow_html=True)
 
