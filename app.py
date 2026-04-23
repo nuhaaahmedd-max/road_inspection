@@ -71,47 +71,25 @@ section[data-testid="stSidebar"] label {{
     color: #FFD700 !important;
     font-weight: 600;
 }}
+span[data-baseweb="tag"] {{
+        background-color: transparent !important; /* خلفية شفافة */
+        border: 1px solid #FACC15 !important;    /* إطار ذهبي رفيع */
+        color: #FACC15 !important;               /* لون النص ذهبي */
+        font-weight: bold !important;            /* نص عريض ( اختياري، لزيادة الوضوح) */
+        border-radius: 8px !important;           /* حواف دائرية قليلاً */
+        padding-left: 10px !important;           /* مسافة على اليسار */
+        padding-right: 10px !important;          /* مسافة على اليمين */
+    }}
 
-span[data-baseweb="tag"] svg {{
+    /* 2. التأكد من أن النص الداخلي يتبع اللون الذهبي */
+    span[data-baseweb="tag"] > span {{
+        color: #FACC15 !important;
+    }}
+
+    /* 3. تنسيق علامة الـ X: لون ذهبي */
+    span[data-baseweb="tag"] svg {{
         fill: #FACC15 !important;
-    }}
-
-    div[data-baseweb="select"] > div {{
-        background-color: {bg_color} !important;
-        border: 1px solid {primary_color} !important;
-        color: {primary_color} !important;
-    }}
-
-    [data-testid="stSidebar"] {{
-        background-color: {sidebar_bg} !important;
-        border-right: 2px solid {primary_color};
-    }}
-
-    /* الكروت */
-    .card {{
-        background: {bg_color};
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid {primary_color};
-        text-align: center;
-    }}
-
-    .value {{
-        font-size: 28px;
-        font-weight: bold;
-        color: {primary_color};
-    }}
-
-    .label {{
-        font-size: 14px;
-        color: #9CA3AF;
-        text-transform: uppercase;
-    }}
-
-    .stAlert {{
-        background-color: {bg_color} !important;
-        border: 1px solid {primary_color} !important;
-        color: {primary_color} !important;
+        margin-left: 5px !important;             /* مسافة صغيرة بين النص و الـ X */
     }}
 </style>
 """, unsafe_allow_html=True)
