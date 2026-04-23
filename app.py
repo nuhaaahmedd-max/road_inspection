@@ -179,7 +179,15 @@ st.markdown("<div style='margin-top:15px'></div>", unsafe_allow_html=True)
 st.markdown('<div class="main-title">Road Inspection Intelligence Dashboard</div>', unsafe_allow_html=True)
 
 # حساب كثافة العيوب (Defect Density)
-road_length_km = 1.0  # تقدير لطول الطريق
+# حساب الفرق بين أقصى وأدنى إحداثيات (تقدير للمسافة)
+if not df_plot.empty:
+    delta_lat = df_plot['Longitude'].max() - df_plot['Longitude'].min()
+    delta_lon = df_plot['Latitude'].max() - df_plot['Latitude'].min()
+    # تحويل فرق الدرجات لمسافة تقريبية (كل درجة تقريباً 111 كم)
+    road_length_km = ((delta_lat**2 + delta_lon**2)**0.5) * 111
+    if road_length_km < 0.1: road_length_km = 0.1 # عشان لو المسافة صغيرة جداً
+else:
+    road_length_km = 1.0
 density_value = len(df_plot) / road_length_km if road_length_km > 0 else 0
 
 # ---------------- TOP ROW: KPIs (تم دمجها في سطر واحد رفيع) ----------------
