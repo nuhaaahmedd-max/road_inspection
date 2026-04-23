@@ -72,24 +72,26 @@ section[data-testid="stSidebar"] label {{
     font-weight: 600;
 }}
 span[data-baseweb="tag"] {{
-        background-color: transparent !important; /* خلفية شفافة */
-        border: 1px solid #FACC15 !important;    /* إطار ذهبي رفيع */
+        background-color: transparent !important; /* إلغاء الخلفية الحمراء */
+        border: 1px solid #FACC15 !important;    /* رسم الإطار الذهبي */
+        border-radius: 5px !important;           /* جعل الحواف مربعة قليلاً مثل صورتك */
+        padding: 2px 8px !important;
+    }}
+
+    /* 2. إجبار النص الداخلي يكون ذهبي وعريض */
+    span[data-baseweb="tag"] span {{
         color: #FACC15 !important;               /* لون النص ذهبي */
-        font-weight: bold !important;            /* نص عريض ( اختياري، لزيادة الوضوح) */
-        border-radius: 8px !important;           /* حواف دائرية قليلاً */
-        padding-left: 10px !important;           /* مسافة على اليسار */
-        padding-right: 10px !important;          /* مسافة على اليمين */
+        font-weight: 600 !important;             /* سمك الخط */
     }}
 
-    /* 2. التأكد من أن النص الداخلي يتبع اللون الذهبي */
-    span[data-baseweb="tag"] > span {{
-        color: #FACC15 !important;
-    }}
-
-    /* 3. تنسيق علامة الـ X: لون ذهبي */
+    /* 3. تنسيق علامة الـ X لتكون ذهبية */
     span[data-baseweb="tag"] svg {{
         fill: #FACC15 !important;
-        margin-left: 5px !important;             /* مسافة صغيرة بين النص و الـ X */
+    }}
+
+    /* 4. إلغاء أي تأثير عند الوقوف بالماوس (Hover) عشان اللون ميتغيرش */
+    span[data-baseweb="tag"]:hover {{
+        background-color: rgba(250, 204, 21, 0.1) !important; /* خلفية ذهبية خفيفة جداً عند اللمس */
     }}
 </style>
 """, unsafe_allow_html=True)
