@@ -71,7 +71,7 @@ section[data-testid="stSidebar"] label {{
 }}
 
 span[data-baseweb="tag"] svg {{
-        fill: {primary_color} !important;
+        fill: #FACC15 !important;
     }}
 
     div[data-baseweb="select"] > div {{
