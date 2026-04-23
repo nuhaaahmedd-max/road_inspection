@@ -124,29 +124,39 @@ span[data-baseweb="tag"] {{
     div[role="radiogroup"] div[data-active="false"] > div {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
-    .stSlider [data-baseweb="slider"] {{
-        background-color: transparent !important;
+    stSlider {{
+        padding-bottom: 20px;
     }}
+
+    /* 2. تصميم الخط الأساسي (الخلفية الرفيعة) */
+    .stSlider [data-baseweb="slider"] > div {{
+        background-color: rgba(255, 215, 0, 0.2) !important; /* ذهبي شفاف */
+        height: 3px !important;
+    }}
+
+    /* 3. تصميم الجزء النشط من الخط (الذهبي الفاقع) */
+    .stSlider [data-baseweb="slider"] > div > div {{
+        background-color: #FFD700 !important;
+        height: 3px !important;
+    }}
+
+    /* 4. تصميم النقطة (الـ Handle) الحمراء المدورة */
+    .stSlider [role="slider"] {{
+        background-color: #FF4B4B !important;
+        border: 2px solid #FF4B4B !important;
+        height: 15px !important;
+        width: 15px !important;
+        border-radius: 50% !important;
+        box-shadow: 0px 0px 5px rgba(0,0,0,0.5) !important;
+    }}
+
+    /* 5. إخفاء الأرقام الجانبية فقط (0 و 1) عشان يفضل "Minimalist" */
     .stSlider [data-testid="stTickBar"] {{
         display: none !important;
     }}
-    /* الخط الذهبي الرفيع */
-    .stSlider [data-baseweb="slider"] > div > div {{
-        background-color: #FFD700 !important;
-        height: 2px !important;
-    }}
-    /* النقطة الحمراء (Handle) */
-    .stSlider [role="slider"] {{
-        background-color: #FF4B4B !important;
-        border: none !important;
-        height: 12px !important;
-        width: 12px !important;
-        border-radius: 50% !important;
-        top: 50% !important;
-    }}
-    /* إخفاء الأرقام والقيم الجانبية لتبسيط الشكل */
-    .stSlider [role="slider"] > div, 
-    .stSlider [data-testid="stWidgetLabel"] + div > div {{
+    
+    /* إخفاء القيمة الرقمية اللي بتظهر فوق السلايدر عند السحب */
+    .stSlider [role="slider"] > div {{
         display: none !important;
     }}
 </style>
