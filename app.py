@@ -125,8 +125,12 @@ span[data-baseweb="tag"] {{
         border-color: rgba(250, 204, 21, 0.4) !important;
     }}
       .stSlider > div > div {{
-        background: linear-gradient(to right, #FFD700, #36454F) !important; 
+        background: #ddd; !important; 
     }}
+    /* الجزء الملوّن (من البداية لحد المؤشر) */
+.stSlider > div > div > div > div {{
+    background: #FFD700 !important;
+    }} 
    
     .stSlider [role="slider"] {{
         background-color: #FFD700 !important;
