@@ -220,7 +220,7 @@ with col_mid:
                 lat_val = row['Longitude']
                 long_val = row['Latitude']
                 html_content = f"""
-                <div style="text-align:center; width:150px; font-family:sans-serif;">
+                <div style="text-align:center; width:200px; font-family:sans-serif;">
                     <b>{row['Object']}</b><br>
                     <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:5px;">
                     <div style="margin-top:10px; padding:5px; border-top:1px solid #ccc; font-size:11px;">
