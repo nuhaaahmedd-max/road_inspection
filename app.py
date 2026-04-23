@@ -169,7 +169,11 @@ if not df.empty:
     selected_types = st.sidebar.multiselect("DEFECT TYPE", options=df["Object"].unique(), default=list(df["Object"].unique()))
     df_plot = df[df["Object"].isin(selected_types)]
 else: df_plot = df
+confidence_min = st.sidebar.slider("MIN CONFIDENCE %:", 0, 100, 0)
 
+df_plot = df_plot[df_plot["Object"].isin(selected_types)]
+df_plot = df_plot[df_plot["Confidence"] >= confidence_min]
+cracks = df_plot[df_plot['Object'] == "Crack"]
 if not df_plot.empty:
     csv = df_plot.to_csv(index=False).encode('utf-8')
     st.sidebar.download_button("📥 Download Report", data=csv, file_name='road_report.csv')
