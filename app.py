@@ -243,7 +243,7 @@ with col_mid:
         
         if view_mode == "Points":
             for index, row in df_plot.iterrows():
-                img_b64 = get_random_image_by_type(row['Object'])
+                img_b64 = get_random_image_by_type(row['Object'], index) # ضفنا index هنا
                 color = color_map.get(row['Object'], "#FFF")
                 lat_val = row['Longitude']
                 long_val = row['Latitude']
