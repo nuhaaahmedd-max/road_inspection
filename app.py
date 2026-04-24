@@ -31,7 +31,7 @@ st.markdown(f"""
     
     .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
     
-    ..main-title { 
+    .main-title { 
         color: #FACC15;
         background-color: #0B0E14; /* لون الخلفية دارك نفس السايد بار */
         font-family: 'Montserrat', sans-serif;
