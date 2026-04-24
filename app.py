@@ -146,29 +146,38 @@ def load_data():
         return df
     except: return pd.DataFrame()
 
-@st.cache_data(show_spinner=False)
-def get_random_image_by_type(obj_type):
-    if obj_type == 'Clear': return "CLEAR_MODE"
-    try:
-        base_path = "assets"
-        target_folder = str(obj_type).strip()
-        full_path = os.path.join(base_path, target_folder)
-        if not os.path.exists(full_path): full_path = os.path.join(base_path, target_folder.lower())
-        if os.path.exists(full_path):
-            images = [f for f in os.listdir(full_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-            if images:
-                selected = random.choice(images)
-                img_path = os.path.join(full_path, selected)
-                with Image.open(img_path) as img:
-                    img = img.convert('RGB')
-                    img.thumbnail((250, 250))
-                    buffered = io.BytesIO()
-                    img.save(buffered, format="JPEG", quality=80)
-                    return base64.b64encode(buffered.getvalue()).decode()
-    except: return None
-    return None
-
 df = load_data()
+@st.cache_data
+def load_images():
+    base_path = "assets"
+    images_dict = {}
+
+    for obj_type in ["Crack", "Pothole", "Manhole"]:
+        folder = os.path.join(base_path, obj_type)
+        if os.path.exists(folder):
+            imgs = []
+            for f in os.listdir(folder):
+                if f.lower().endswith(('.jpg', '.jpeg', '.png')):
+                    path = os.path.join(folder, f)
+                    with Image.open(path) as img:
+                        img = img.convert('RGB')
+                        img.thumbnail((250, 250))
+                        buffer = io.BytesIO()
+                        img.save(buffer, format="JPEG", quality=80)
+                        imgs.append(base64.b64encode(buffer.getvalue()).decode())
+            images_dict[obj_type] = imgs
+
+    return images_dict
+
+images_dict = load_images()
+
+def get_random_image_by_type(obj_type):
+    if obj_type == 'Clear':
+        return None
+    imgs = images_dict.get(obj_type, [])
+    if imgs:
+        return random.choice(imgs)
+    return None
 
 # ---------------- SIDEBAR (نفس الفلاتر) ----------------
 st.sidebar.markdown("## 🛠️ FILTERS")
