@@ -146,7 +146,6 @@ def load_data():
         return df
     except: return pd.DataFrame()
 
-@st.cache_data(show_spinner=False)
 def get_random_image_by_type(obj_type):
     if obj_type == 'Clear': return "CLEAR_MODE"
     try:
@@ -157,6 +156,7 @@ def get_random_image_by_type(obj_type):
         if os.path.exists(full_path):
             images = [f for f in os.listdir(full_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
             if images:
+                # هنا الاختيار العشوائي هيشتغل فعلياً في كل مرة
                 selected = random.choice(images)
                 img_path = os.path.join(full_path, selected)
                 with Image.open(img_path) as img:
@@ -167,7 +167,6 @@ def get_random_image_by_type(obj_type):
                     return base64.b64encode(buffered.getvalue()).decode()
     except: return None
     return None
-
 df = load_data()
 
 # ---------------- SIDEBAR (نفس الفلاتر) ----------------
