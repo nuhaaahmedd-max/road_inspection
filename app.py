@@ -150,8 +150,7 @@ def get_random_image_by_type(obj_type):
             return os.path.join(folder, selected)
     
     return None
-
-df = load_data()
+ df = load_data()
 
 # ---------------- SIDEBAR (نفس الفلاتر) ----------------
 st.sidebar.markdown("## 🛠️ FILTERS")
