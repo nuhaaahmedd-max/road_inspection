@@ -31,6 +31,10 @@ st.markdown(f"""
       .stApp {{
         background-color: #0B0E14 !important;
     }}
+    /* ده عشان يضمن إن الحتة اللي فوق خالص (الـ Header بتاع ستريمليت) تكون سودة */
+    header[data-testid="stHeader"] {{
+        background-color: rgba(0,0,0,0) !important;
+    }}
 
     /* ده هيشيل الخلفية البيضاء من الحاوية الرئيسية */
     div[data-testid="stAppViewContainer"] {{
