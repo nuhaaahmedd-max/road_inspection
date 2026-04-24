@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import folium
-from streamlit_folium import st_folium
+from streamlit_folium import folium_static
 from folium.plugins import HeatMap, Fullscreen
 import plotly.express as px
 import base64
@@ -148,6 +148,10 @@ def load_data():
 
 # هنخلي الكاش يعتمد على الـ seed عشان يثبت صورة لكل نقطة وميتقلش الجهاز
 def get_random_image_by_type(obj_type, seed):
+    @st.cache_data(show_spinner=False)
+def get_cached_image(obj_type, seed):
+    # الكود بتاعك اللي بيطلع الـ base64
+    return get_random_image_by_type(obj_type, seed)
     if obj_type == 'Clear': return "CLEAR_MODE"
     try:
         random.seed(seed)
@@ -295,7 +299,7 @@ with col_mid:
             HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()], radius=15).add_to(m)
             
         # ارتفاع الخريطة لملء المنتصف دون تسبب في Scroll
-        st_folium(m, height=450, width="100%", key="main_map")
+        folium_static(m, height=450, width=700) # العرض بالبكسل هنا أدق
 
 with col_right:
     st.markdown("##### ⚠️ Critical Alerts")
