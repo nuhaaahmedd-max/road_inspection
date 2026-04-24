@@ -145,6 +145,7 @@ def load_data():
         df = df.dropna(subset=['Latitude', 'Longitude'])
         return df
     except: return pd.DataFrame()
+        
         def get_random_image_by_type(obj_type):
     if obj_type == 'Clear':
         return None
