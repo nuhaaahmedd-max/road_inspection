@@ -28,21 +28,22 @@ st.markdown(f"""
         padding-bottom: 0rem !important; 
         max-width: 98% !important;
     }}
+      .stApp {{
+        background-color: #0B0E14 !important;
+    }}
+
+    /* ده هيشيل الخلفية البيضاء من الحاوية الرئيسية */
+    div[data-testid="stAppViewContainer"] {{
+        background-color: #0B0E14 !important;
+    }}
     
     .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
     
     .main-title {{ 
-        color: #FACC15; 
-        background-color: #0B0E14; 
-        font-family: 'Montserrat', sans-serif;
-        font-size: 26px; 
-        font-weight: 900; 
-        text-align: left; 
-        padding: 15px; 
-        border-radius: 10px; 
-        border: 1px solid #1F2937; 
-        margin-bottom: 20px; 
-        letter-spacing: 1px;
+        color: {gold_color}; font-family: 'Montserrat', sans-serif;
+        font-size: 26px; font-weight: 900; text-align: left; 
+        padding: 5px 0px 5px 15px; border-bottom: 1px solid #1F2937; 
+        margin-bottom: 10px; letter-spacing: 1px;
     }}
 
     /* تصغير الكروت لتناسب سطر واحد */
