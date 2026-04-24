@@ -151,7 +151,7 @@ def get_random_image_by_type(obj_type, seed):
     @st.cache_data(show_spinner=False)
     def get_cached_image(obj_type, seed):
     # الكود بتاعك اللي بيطلع الـ base64
-    return get_random_image_by_type(obj_type, seed)
+      return get_random_image_by_type(obj_type, seed)
     if obj_type == 'Clear': return "CLEAR_MODE"
     try:
         random.seed(seed)
