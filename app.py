@@ -31,12 +31,20 @@ st.markdown(f"""
     
     .stApp {{ background-color: #0B0E14; color: {gold_color}; }}
     
-    .main-title {{ 
-        color: {gold_color}; font-family: 'Montserrat', sans-serif;
-        font-size: 26px; font-weight: 900; text-align: left; 
-        padding: 5px 0px 5px 15px; border-bottom: 1px solid #1F2937; 
-        margin-bottom: 10px; letter-spacing: 1px;
-    }}
+    ..main-title { 
+        color: #FACC15; /* لون النص ذهبي */
+        background-color: #0B0E14; /* لون الخلفية دارك نفس السايد بار */
+        font-family: 'Montserrat', sans-serif;
+        font-size: 26px; 
+        font-weight: 900; 
+        text-align: left; 
+        padding: 15px; 
+        border-radius: 10px; /* حواف دائرية خفيفة */
+        border: 1px solid #1F2937; /* إطار غامق بسيط */
+        margin-bottom: 20px; 
+        letter-spacing: 1px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* ظل خفيف عشان يبرز */
+    }
 
     /* تصغير الكروت لتناسب سطر واحد */
     .card {{ 
