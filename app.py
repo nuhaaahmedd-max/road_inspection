@@ -145,41 +145,24 @@ def load_data():
         df = df.dropna(subset=['Latitude', 'Longitude'])
         return df
     except: return pd.DataFrame()
-
-# هنخلي الكاش يعتمد على الـ seed عشان يثبت صورة لكل نقطة وميتقلش الجهاز
-def get_random_image_by_type(obj_type, seed):
-    if obj_type == 'Clear': return "CLEAR_MODE"
+@st.cache_data(ttl=600) # الكاش هيفضل موجود 10 دقائق عشان السرعة
+def get_random_image_by_type(obj_type):
+    if obj_type == 'Clear': return ""
     try:
-        random.seed(seed)
-        # تأكدي إن المسار ده هو اللي فيه الصور فعلاً
-        base_path = "assets" 
-        target_folder = str(obj_type).strip()
-        full_path = os.path.join(base_path, target_folder)
-
-        # لو مش لاقي الفولدر بالكبير، يدور بالصغير
-        if not os.path.exists(full_path):
-            full_path = os.path.join(base_path, target_folder.lower())
-
+        base_path = "assets"
+        full_path = os.path.join(base_path, str(obj_type).strip())
         if os.path.exists(full_path):
             images = [f for f in os.listdir(full_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
             if images:
-                selected = random.choice(images)
+                selected = random.choice(images) # عشوائي بسيط
                 img_path = os.path.join(full_path, selected)
-                
-                # السطر ده عشان نتأكد إن الصورة بتفتح صح
                 with Image.open(img_path) as img:
-                    img = img.convert('RGB')
-                    img.thumbnail((250, 250))
+                    img.thumbnail((150, 150)) # صغرنا الحجم جداً عشان الخفة
                     buffered = io.BytesIO()
-                    img.save(buffered, format="JPEG", quality=70)
+                    img.save(buffered, format="JPEG", quality=40)
                     return base64.b64encode(buffered.getvalue()).decode()
-        else:
-            # لو دخل هنا يبقى مش لاقي الفولدر أصلاً
-            print(f"Folder not found: {full_path}")
-            return None
-    except Exception as e:
-        print(f"Error: {e}")
-        return None
+    except: return ""
+    return ""
 df = load_data()
 
 # ---------------- SIDEBAR (نفس الفلاتر) ----------------
@@ -248,32 +231,33 @@ with col_left:
 with col_mid:
     st.markdown("##### 🗺️ Spatial Inspection View")
     if not df_plot.empty:
-        m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], zoom_start=15, tiles="CartoDB dark_matter")
-        Fullscreen().add_to(m)
+        # إنشاء الخريطة
+        m = folium.Map(location=[df_plot['Longitude'].mean(), df_plot['Latitude'].mean()], 
+                       zoom_start=15, tiles="CartoDB dark_matter")
         
         if view_mode == "Points":
-            for index, row in df_plot.iterrows():
-                # بننادي الدالة بالـ index عشان السرعة وتنوع الصور
-                img_b64 = get_random_image_by_type(row['Object'], index)
+            # بنرسم أول 100 نقطة بس عشان الخريطة متهنجش (لو الداتا كبيرة)
+            for index, row in df_plot.head(100).iterrows():
+                img_b64 = get_random_image_by_type(row['Object'])
                 color = color_map.get(row['Object'], "#FFF")
                 
-                # ده الـ HTML اللي فيه الإحداثيات بتاعتك زي ما كانت
                 html_content = f"""
-                <div style="text-align:center; width:220px; font-family:sans-serif;">
-                    <b style="font-size:16px; color:#333;">{row['Object']}</b><br>
-                    <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:8px; margin-top:5px;">
-                    <div style="margin-top:10px; padding:8px; border-top:1px solid #ccc; background-color:#f9f9f9; border-radius:5px; font-size:12px;">
-                        <p style="margin:0; color:#333;"><b>Lat (Y):</b> {row['Longitude']:.6f}</p>
-                        <p style="margin:0; color:#333;"><b>Long (X):</b> {row['Latitude']:.6f}</p>
-                    </div>
+                <div style="text-align:center; width:180px; font-family:sans-serif;">
+                    <b style="color:#333;">{row['Object']}</b><br>
+                    {'<img src="data:image/jpeg;base64,' + img_b64 + '" style="width:100%; border-radius:5px;">' if img_b64 else ''}
+                    <p style="font-size:10px; color:#666; margin-top:5px;">Lat: {row['Longitude']:.4f}<br>Long: {row['Latitude']:.4f}</p>
                 </div>
                 """
-                
                 folium.CircleMarker(
                     location=[row['Longitude'], row['Latitude']],
-                    radius=7, color=color, fill=True, fill_opacity=0.8,
-                    popup=folium.Popup(html_content, max_width=250) 
+                    radius=6, color=color, fill=True, fill_opacity=0.7,
+                    popup=folium.Popup(html_content, max_width=200)
                 ).add_to(m)
+        else:
+            HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()], radius=10).add_to(m)
+            
+        # عرض الخريطة بدون key معقد عشان متختفيش
+        st_folium(m, height=400, width="100%")
 
 with col_right:
     st.markdown("##### ⚠️ Critical Alerts")
