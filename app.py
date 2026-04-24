@@ -136,21 +136,39 @@ span[data-baseweb="tag"] {{
 """, unsafe_allow_html=True)
 
 # ---------------- DATA LOADING (نفس منطقك بدون تغيير) ----------------
+@st.cache_data(ttl=300)
+def load_data():
+    try:
+        df = pd.read_csv("road_data.csv")
+        valid_objects = ['Crack', 'Pothole', 'Manhole', 'Clear']
+        df = df[df['Object'].isin(valid_objects)]
+        df = df.dropna(subset=['Latitude', 'Longitude'])
+        return df
+    except: return pd.DataFrame()
+
+@st.cache_data(show_spinner=False)
 def get_random_image_by_type(obj_type):
-    if obj_type == 'Clear':
-        return None
-    
-    base_path = "assets"
-    folder = os.path.join(base_path, obj_type)
-    
-    if os.path.exists(folder):
-        images = [f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
-        if images:
-            selected = random.choice(images)
-            return os.path.join(folder, selected)
-    
+    if obj_type == 'Clear': return "CLEAR_MODE"
+    try:
+        base_path = "assets"
+        target_folder = str(obj_type).strip()
+        full_path = os.path.join(base_path, target_folder)
+        if not os.path.exists(full_path): full_path = os.path.join(base_path, target_folder.lower())
+        if os.path.exists(full_path):
+            images = [f for f in os.listdir(full_path) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+            if images:
+                selected = random.choice(images)
+                img_path = os.path.join(full_path, selected)
+                with Image.open(img_path) as img:
+                    img = img.convert('RGB')
+                    img.thumbnail((250, 250))
+                    buffered = io.BytesIO()
+                    img.save(buffered, format="JPEG", quality=80)
+                    return base64.b64encode(buffered.getvalue()).decode()
+    except: return None
     return None
- df = load_data()
+
+df = load_data()
 
 # ---------------- SIDEBAR (نفس الفلاتر) ----------------
 st.sidebar.markdown("## 🛠️ FILTERS")
