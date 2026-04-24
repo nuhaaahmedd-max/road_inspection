@@ -253,34 +253,18 @@ with col_mid:
         
         if view_mode == "Points":
             for index, row in df_plot.iterrows():
-                # دوري على السطر ده وغيريه للنسخة دي:
+                # بننادي الدالة بالـ index عشان السرعة وتنوع الصور
                 img_b64 = get_random_image_by_type(row['Object'], index)
                 color = color_map.get(row['Object'], "#FFF")
-                lat_val = row['Longitude']
-                long_val = row['Latitude']
-              # إضافة Scroll ومنع خروج المحتوى عن البرواز
+                
+                # ده الـ HTML اللي فيه الإحداثيات بتاعتك زي ما كانت
                 html_content = f"""
-                <div style="
-                    text-align:center; 
-                    width:220px; 
-                    max-height:300px; 
-                    overflow-y:auto; 
-                    overflow-x:hidden; 
-                    font-family:sans-serif;
-                    padding-right:5px;
-                ">
+                <div style="text-align:center; width:220px; font-family:sans-serif;">
                     <b style="font-size:16px; color:#333;">{row['Object']}</b><br>
                     <img src="data:image/jpeg;base64,{img_b64}" style="width:100%; border-radius:8px; margin-top:5px;">
-                    <div style="
-                        margin-top:10px; 
-                        padding:8px; 
-                        border-top:1px solid #ccc; 
-                        background-color:#f9f9f9; 
-                        border-radius:5px;
-                        font-size:12px;
-                    ">
-                        <p style="margin:0;"><b>Lat (Y):</b> {row['Longitude']:.6f}</p>
-                        <p style="margin:0;"><b>Long (X):</b> {row['Latitude']:.6f}</p>
+                    <div style="margin-top:10px; padding:8px; border-top:1px solid #ccc; background-color:#f9f9f9; border-radius:5px; font-size:12px;">
+                        <p style="margin:0; color:#333;"><b>Lat (Y):</b> {row['Longitude']:.6f}</p>
+                        <p style="margin:0; color:#333;"><b>Long (X):</b> {row['Latitude']:.6f}</p>
                     </div>
                 </div>
                 """
@@ -288,14 +272,8 @@ with col_mid:
                 folium.CircleMarker(
                     location=[row['Longitude'], row['Latitude']],
                     radius=7, color=color, fill=True, fill_opacity=0.8,
-                    # تحديد العرض والارتفاع الأقصى للفقاعة نفسها
                     popup=folium.Popup(html_content, max_width=250) 
                 ).add_to(m)
-        else:
-            HeatMap([[r['Longitude'], r['Latitude']] for _, r in df_plot.iterrows()], radius=15).add_to(m)
-            
-        # ارتفاع الخريطة لملء المنتصف دون تسبب في Scroll
-        st_folium(m, height=450, width="100%", key="main_map")
 
 with col_right:
     st.markdown("##### ⚠️ Critical Alerts")
