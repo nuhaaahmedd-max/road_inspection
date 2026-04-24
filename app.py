@@ -136,17 +136,7 @@ span[data-baseweb="tag"] {{
 """, unsafe_allow_html=True)
 
 # ---------------- DATA LOADING (نفس منطقك بدون تغيير) ----------------
-@st.cache_data(ttl=300)
-def load_data():
-    try:
-        df = pd.read_csv("road_data.csv")
-        valid_objects = ['Crack', 'Pothole', 'Manhole', 'Clear']
-        df = df[df['Object'].isin(valid_objects)]
-        df = df.dropna(subset=['Latitude', 'Longitude'])
-        return df
-    except: return pd.DataFrame()
-        
-        def get_random_image_by_type(obj_type):
+def get_random_image_by_type(obj_type):
     if obj_type == 'Clear':
         return None
     
@@ -162,6 +152,7 @@ def load_data():
     return None
 
 df = load_data()
+
 # ---------------- SIDEBAR (نفس الفلاتر) ----------------
 st.sidebar.markdown("## 🛠️ FILTERS")
 view_mode = st.sidebar.radio("MAP MODE", ["Points", "Heatmap"], index=0)
