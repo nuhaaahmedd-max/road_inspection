@@ -145,40 +145,22 @@ def load_data():
         df = df.dropna(subset=['Latitude', 'Longitude'])
         return df
     except: return pd.DataFrame()
-
-df = load_data()
-@st.cache_data
-def load_images():
-    base_path = "assets"
-    images_dict = {}
-
-    for obj_type in ["Crack", "Pothole", "Manhole"]:
-        folder = os.path.join(base_path, obj_type)
-        if os.path.exists(folder):
-            imgs = []
-            for f in os.listdir(folder):
-                if f.lower().endswith(('.jpg', '.jpeg', '.png')):
-                    path = os.path.join(folder, f)
-                    with Image.open(path) as img:
-                        img = img.convert('RGB')
-                        img.thumbnail((250, 250))
-                        buffer = io.BytesIO()
-                        img.save(buffer, format="JPEG", quality=80)
-                        imgs.append(base64.b64encode(buffer.getvalue()).decode())
-            images_dict[obj_type] = imgs
-
-    return images_dict
-
-images_dict = load_images()
-
-def get_random_image_by_type(obj_type):
+        def get_random_image_by_type(obj_type):
     if obj_type == 'Clear':
         return None
-    imgs = images_dict.get(obj_type, [])
-    if imgs:
-        return random.choice(imgs)
+    
+    base_path = "assets"
+    folder = os.path.join(base_path, obj_type)
+    
+    if os.path.exists(folder):
+        images = [f for f in os.listdir(folder) if f.lower().endswith(('.jpg', '.jpeg', '.png'))]
+        if images:
+            selected = random.choice(images)
+            return os.path.join(folder, selected)
+    
     return None
 
+df = load_data()
 # ---------------- SIDEBAR (نفس الفلاتر) ----------------
 st.sidebar.markdown("## 🛠️ FILTERS")
 view_mode = st.sidebar.radio("MAP MODE", ["Points", "Heatmap"], index=0)
